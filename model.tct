@@ -1,0 +1,45 @@
+// Define the User model for representing users.
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String    // Password should be securely hashed in a real application
+  name      String?
+  bio       String?
+  tweets    Tweet[]   // Define a relation to the Tweet model
+  followers User[]    @relation("Followers", references: [id])
+  following User[]    @relation("Following", references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Define the Tweet model for representing tweets.
+model Tweet {
+  id        Int       @id @default(autoincrement())
+  text      String
+  author    User      @relation(fields: [authorId], references: [id])
+  authorId  Int
+  likes     Like[]    // Define a relation to the Like model
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// Define the Like model for representing likes on tweets.
+model Like {
+  id        Int       @id @default(autoincrement())
+  tweet     Tweet     @relation(fields: [tweetId], references: [id])
+  tweetId   Int
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime  @default(now())
+}
+
+// Define the Follow model for representing followers/following relationships.
+model Follow {
+  id          Int     @id @default(autoincrement())
+  follower    User    @relation(fields: [followerId], references: [id])
+  followerId  Int
+  following   User    @relation(fields: [followingId], references: [id])
+  followingId Int
+  createdAt   DateTime @default(now())
+}
