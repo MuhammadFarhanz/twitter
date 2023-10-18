@@ -1,8 +1,10 @@
 import supertest from "supertest";
 import { app } from "../src/application/app.js";
+import bcrypt from "bcrypt";
 import {
   createTestUser,
   createUserAndGenerateTestToken,
+  getTestUser,
   removeTestUser,
 } from "./test-util.js";
 
@@ -110,10 +112,6 @@ describe("POST /api/users/login", () => {
 });
 
 describe("GET /api/users/current", () => {
-  // beforeEach(async () => {
-  //   await createTestUser();
-  // });
-
   afterEach(async () => {
     await removeTestUser();
   });
@@ -139,5 +137,82 @@ describe("GET /api/users/current", () => {
 
     expect(result.status).toBe(401);
     expect(result.body.errors).toBeDefined();
+  });
+});
+
+describe("PATCH /api/users/current", () => {
+  afterEach(async () => {
+    await removeTestUser();
+  });
+
+  it("should can update user", async () => {
+    const { token } = await createUserAndGenerateTestToken();
+
+    const result = await supertest(app)
+      .patch("/api/users/current")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ username: "newusername", password: "newpassword" });
+
+    expect(result.status).toBe(200);
+  });
+
+  it("should can update user name", async () => {
+    const { token } = await createUserAndGenerateTestToken();
+
+    const result = await supertest(app)
+      .patch("/api/users/current")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ username: "newusername" });
+
+    expect(result.status).toBe(200);
+  });
+
+  it("should can update password", async () => {
+    const { token } = await createUserAndGenerateTestToken();
+
+    const result = await supertest(app)
+      .patch("/api/users/current")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ password: "newpassword" });
+
+    expect(result.status).toBe(200);
+
+    const user = await getTestUser();
+
+    expect(await bcrypt.compare("newpassword", user.password)).toBe(true);
+  });
+
+  it("should can reject invalid request", async () => {
+    const result = await supertest(app).patch("/api/users/current").send({});
+
+    expect(result.status).toBe(401);
+  });
+});
+
+describe("DELETE /api/users/delete", () => {
+  afterEach(async () => {
+    await removeTestUser();
+  });
+
+  it("should can delete user", async () => {
+    const { token } = await createUserAndGenerateTestToken();
+
+    const result = await supertest(app)
+      .delete("/api/users/logout")
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(result.status).toBe(200);
+
+    const user = await getTestUser();
+
+    expect(user.token).toBeNull();
+  });
+
+  it("should can reject logout if token is invalid", async () => {
+    const result = await supertest(app)
+      .delete("/api/users/logout")
+      .set("Authorization", "wrong token");
+
+    expect(result.status).toBe(401);
   });
 });

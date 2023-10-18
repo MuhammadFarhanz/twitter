@@ -26,9 +26,38 @@ const login = async (req, res, next) => {
 
 const get = async (req, res, next) => {
   try {
-    const username = req.user.username;
+    const id = req.user.id;
 
-    const result = await userService.get(username);
+    const result = await userService.get(id);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const update = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+
+    const request = req.body;
+    request.id = id;
+
+    const result = await userService.update(request);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const logout = async (req, res) => {
+  try {
+    const result = await userService.logout(req.user.id);
 
     res.status(200).json({
       data: result,
@@ -42,4 +71,6 @@ export default {
   register,
   login,
   get,
+  update,
+  logout,
 };

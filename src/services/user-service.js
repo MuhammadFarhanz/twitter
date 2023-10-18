@@ -4,6 +4,7 @@ import {
   getUserValidation,
   loginUserValidation,
   registerUserValidation,
+  updateUserValidation,
 } from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
@@ -41,8 +42,8 @@ const login = async (request) => {
       username: loginRequest.username,
     },
     select: {
-      id: true,
       username: true,
+      name: true,
       password: true,
     },
   });
@@ -58,15 +59,14 @@ const login = async (request) => {
 
   if (isPasswordValid) {
     const payload = {
-      id: user.id,
       username: user.username,
+      name: user.name,
     };
 
     const secret = process.env.JWT_SECRET;
 
     const token = jwt.sign(payload, secret);
 
-    console.info(token);
     return prisma.user.update({
       data: {
         token: token,
@@ -83,12 +83,12 @@ const login = async (request) => {
   }
 };
 
-const get = async (username) => {
-  username = validate(getUserValidation, username);
+const get = async (id) => {
+  id = validate(getUserValidation, id);
 
   const user = await prisma.user.findUnique({
     where: {
-      username: username,
+      id: id,
     },
     select: {
       username: true,
@@ -103,8 +103,66 @@ const get = async (username) => {
   return user;
 };
 
+const update = async (request) => {
+  const user = validate(updateUserValidation, request);
+
+  const totalUserInDatabase = await prisma.user.count({
+    where: {
+      id: user.id,
+    },
+  });
+
+  if (totalUserInDatabase !== 1) {
+    throw new ResponseError(401, "user not found");
+  }
+
+  const data = {};
+
+  if (user.name) {
+    data.name = user.name;
+  }
+
+  if (user.password) {
+    data.password = await bcrypt.hash(user.password, 10);
+  }
+
+  return prisma.user.update({
+    where: {
+      id: user.id,
+    },
+    data: data,
+    select: {
+      username: true,
+      name: true,
+    },
+  });
+};
+
+const logout = async (id) => {
+  const user = await prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "user not found");
+  }
+
+  return prisma.user.update({
+    where: {
+      id: id,
+    },
+    data: {
+      token: null,
+    },
+  });
+};
+
 export default {
   register,
   login,
   get,
+  update,
+  logout,
 };
