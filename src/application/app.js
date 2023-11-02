@@ -3,10 +3,17 @@ import { errorMiddleware } from "../middleware/error-middleware.js";
 import { publicRouter } from "../routes/public.js";
 import { userRouter } from "../routes/protected.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 
 export const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:3000",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
 app.use(publicRouter);
 app.use(userRouter);

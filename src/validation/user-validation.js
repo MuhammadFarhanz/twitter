@@ -9,7 +9,7 @@ const registerUserValidation = Joi.object({
 });
 
 const loginUserValidation = Joi.object({
-  username: Joi.string().max(20).required(),
+  email: Joi.string().required(),
   password: Joi.string().min(5).required(),
 });
 

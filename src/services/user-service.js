@@ -13,14 +13,18 @@ import jwt from "jsonwebtoken";
 const register = async (request) => {
   const user = validate(registerUserValidation, request);
 
-  const countUser = prisma.user.count({
+  const existingUser = await prisma.user.findFirst({
     where: {
-      username: user.username,
+      OR: [{ username: user.username }, { email: user.email }],
     },
   });
 
-  if (countUser === 1) {
-    throw new ResponseError(404, "username already exist");
+  if (existingUser) {
+    if (existingUser.username === user.username) {
+      throw new ResponseError(400, "Username already exists", "username");
+    } else if (existingUser.email === user.email) {
+      throw new ResponseError(400, "Email is already registered", "email");
+    }
   }
 
   user.password = await bcrypt.hash(user.password, 10);
@@ -34,22 +38,22 @@ const register = async (request) => {
   });
 };
 
-const login = async (request) => {
+const login = async (request, res) => {
   const loginRequest = validate(loginUserValidation, request);
 
   const user = await prisma.user.findUnique({
     where: {
-      username: loginRequest.username,
+      email: loginRequest.email,
     },
     select: {
+      id: true,
       username: true,
-      name: true,
       password: true,
     },
   });
 
   if (!user) {
-    throw new ResponseError(401, "username or passowrd wrong");
+    throw new ResponseError(401, "invalid email", "email");
   }
 
   const isPasswordValid = await bcrypt.compare(
@@ -59,13 +63,23 @@ const login = async (request) => {
 
   if (isPasswordValid) {
     const payload = {
+      id: user.id,
       username: user.username,
-      name: user.name,
     };
 
     const secret = process.env.JWT_SECRET;
 
-    const token = jwt.sign(payload, secret);
+    const token = jwt.sign(payload, secret, {
+      expiresIn: 60 * 60 * 24 * 30,
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+      path: "/",
+    });
 
     return prisma.user.update({
       data: {
@@ -79,7 +93,7 @@ const login = async (request) => {
       },
     });
   } else {
-    throw new ResponseError(401, "password invalid");
+    throw new ResponseError(401, "invalid password", "password");
   }
 };
 
@@ -97,7 +111,7 @@ const get = async (id) => {
   });
 
   if (!user) {
-    throw new ResponseError(404, "user not found");
+    throw new FieldResponseError(404, "user not found");
   }
 
   return user;
