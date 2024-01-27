@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,16 +8,59 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String // Password should be securely hashed in a real application
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String    @unique
+  password  String
   name      String?
   bio       String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   token     String?
-  // tweets    Tweet[]   // Define a relation to the Tweet model
-  // followers User[]    @relation("Followers", references: [id])
-  // following User[]    @relation("Following", references: [id])
+  comments  Comment[]
+  likes     Like[]
+  tweets    Tweet[]   @relation("userTweets")
+}
+
+model Tweet {
+  id        Int       @id @default(autoincrement())
+  content   String?
+  authorId  Int
+  hashtags  String[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  images    Image[]
+  comments  Comment[] @relation("commentTweets")
+  likes     Like[]    @relation("likeTweets")
+  author    User      @relation("userTweets", fields: [authorId], references: [id])
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  tweetId   Int
+  url       String
+  createdAt DateTime @default(now())
+
+  tweet Tweet @relation(fields: [tweetId], references: [id])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  tweetId   Int
+  authorId  Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id])
+  tweet     Tweet    @relation("commentTweets", fields: [tweetId], references: [id])
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  tweetId   Int
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tweet     Tweet    @relation("likeTweets", fields: [tweetId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 }
