@@ -105,13 +105,15 @@ const get = async (id) => {
       id: id,
     },
     select: {
+      id: true,
       username: true,
       name: true,
+      bio: true,
     },
   });
 
   if (!user) {
-    throw new FieldResponseError(404, "user not found");
+    throw new ResponseError(404, "user not found");
   }
 
   return user;

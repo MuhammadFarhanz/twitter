@@ -73,7 +73,7 @@ describe("POST /api/users/login", () => {
   });
   it("should can login", async () => {
     const result = await supertest(app).post("/api/users/login").send({
-      username: "test",
+      email: "test@gmail.com",
       password: "secret",
     });
 
@@ -92,7 +92,7 @@ describe("POST /api/users/login", () => {
 
   it("should can reject if password wrong", async () => {
     const result = await supertest(app).post("/api/users/login").send({
-      username: "test",
+      email: "test",
       password: "wrong",
     });
 
@@ -102,7 +102,7 @@ describe("POST /api/users/login", () => {
 
   it("should can reject if username wrong", async () => {
     const result = await supertest(app).post("/api/users/login").send({
-      username: "wrong",
+      email: "wrong",
       password: "wrong",
     });
 

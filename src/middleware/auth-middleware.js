@@ -5,6 +5,7 @@ export const authMiddleware = async (req, res, next) => {
   try {
     const cookies = req.headers.cookie;
 
+    // console.info(cookies, "cok");
     if (!cookies) {
       return res.status(401).json({
         errors: "Unauthorized: Missing token",
