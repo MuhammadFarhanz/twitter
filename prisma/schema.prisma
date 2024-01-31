@@ -20,19 +20,20 @@ model User {
   comments  Comment[]
   likes     Like[]
   tweets    Tweet[]   @relation("userTweets")
+  retweet   Retweet[]
 }
 
 model Tweet {
   id        Int       @id @default(autoincrement())
-  content   String?
+  content   String
   authorId  Int
-  hashtags  String[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   images    Image[]
   comments  Comment[] @relation("commentTweets")
   likes     Like[]    @relation("likeTweets")
   author    User      @relation("userTweets", fields: [authorId], references: [id])
+  retweet   Retweet[]
 }
 
 model Image {
@@ -63,4 +64,17 @@ model Like {
   updatedAt DateTime @updatedAt
   tweet     Tweet    @relation("likeTweets", fields: [tweetId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
+}
+
+model Retweet {
+  id        Int      @id @default(autoincrement())
+  tweetId   Int
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tweet Tweet @relation(fields: [tweetId], references: [id])
+  user  User  @relation(fields: [userId], references: [id])
+
+  @@unique([tweetId, userId])
 }
