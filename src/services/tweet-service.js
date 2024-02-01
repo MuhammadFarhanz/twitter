@@ -24,7 +24,7 @@ const create = async (request) => {
         create: image,
       },
     },
-    select: {
+    include: {
       content: true,
       images: true,
       likes: true,
@@ -35,9 +35,6 @@ const create = async (request) => {
 const getAll = async () => {
   return await prisma.tweet.findMany({
     take: 10,
-    // orderBy: {
-    //   _random: "asc",
-    // },
     select: {
       id: true,
       content: true,
@@ -47,13 +44,16 @@ const getAll = async () => {
         select: {
           id: true,
           userId: true,
-          user: true,
+        },
+      },
+      retweets: {
+        select: {
+          id: true,
+          userId: true,
         },
       },
       comments: true,
-      _count: {
-        select: { likes: true },
-      },
+      _count: true,
     },
   });
 };

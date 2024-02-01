@@ -23,8 +23,7 @@ userRouter.get("/api/tweet", tweetController.getAll);
 userRouter.get("/api/tweet/:id", tweetController.getById);
 
 //Like Tweet API
-userRouter.post("/api/tweet/like", likeController.likeTweet);
-userRouter.post("/api/tweet/unlike", likeController.unlikeTweet);
+userRouter.post("/api/tweet/like", likeController.create);
 
 //Retweet API
 userRouter.post("/api/tweet/retweet", retweetController.create);

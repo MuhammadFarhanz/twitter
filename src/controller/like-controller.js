@@ -1,33 +1,18 @@
 import likeService from "../services/like-service.js";
 
-const likeTweet = async (req, res) => {
+const create = async (req, res, next) => {
   try {
     const id = req.user.id;
 
     const request = req.body;
     request.userId = id;
 
-    const result = likeService.likeTweet(request);
+    const result = await likeService.create(request);
 
     res.status(200).json({
-      data: result,
-    });
-  } catch (e) {
-    next(e);
-  }
-};
-
-const unlikeTweet = async (req, res) => {
-  try {
-    const id = req.user.id;
-
-    const request = req.body;
-    request.userId = id;
-
-    const result = likeService.unlikeTweet(request);
-
-    res.status(200).json({
-      data: result,
+      data: {
+        result,
+      },
     });
   } catch (e) {
     next(e);
@@ -35,6 +20,5 @@ const unlikeTweet = async (req, res) => {
 };
 
 export default {
-  likeTweet,
-  unlikeTweet,
+  create,
 };
