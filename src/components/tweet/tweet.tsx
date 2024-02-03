@@ -4,28 +4,53 @@ import { CustomIcon } from "../ui/custom-icon";
 import Link from "next/link";
 import { useGetUser } from "@/api/useGetUser";
 import { useLikeTweet } from "@/api/useLikeTweet";
-import { useUnlikeTweet } from "@/api/useUnlikeTweet";
+import { useRetweet } from "@/api/useRetweet";
 
-function TweetCard(data: any) {
-  const { content, images, id, likes } = data.data;
+type TweetCardProps = {
+  data: {
+    content: string;
+    images: any;
+    id: number;
+    likes: any;
+    retweets: any;
+    _count: {
+      likes: number;
+      retweets: number;
+    };
+    author: {
+      id: number;
+      username: string;
+      name: string;
+      bio: string;
+    };
+  };
+};
+
+function TweetCard({ data }: TweetCardProps) {
+  const { content, images, id, likes, retweets, author, _count } = data;
   const [isLiked, setIsLiked] = useState(false);
-  const { mutateAsync: likeTweet, status: likeStatus } = useLikeTweet();
-  const {
-    mutateAsync: unlikeTweet,
-    status: unlikeStatus,
-    isSuccess,
-  } = useUnlikeTweet();
+  const [isRetweeted, setIsRetweeted] = useState(false);
 
+  const { mutateAsync: likeTweet, status: likeStatus } = useLikeTweet();
+  const { mutateAsync: retweet } = useRetweet();
   const { data: user } = useGetUser();
 
+  console.log("here", author);
   useEffect(() => {
     if (user && likes) {
-      const hasUserLiked = likes.some(
-        (like: any) => like.user.id === user.data.id
-      );
+      const hasUserLiked =
+        user && likes.some((like: any) => like.userId === user.data.id);
+
       setIsLiked(hasUserLiked);
     }
-  }, [user, likes]);
+
+    if (user && retweets) {
+      const hasUserRetweeted = retweets.some(
+        (retweet: any) => retweet.userId === user.data.id
+      );
+      setIsRetweeted(hasUserRetweeted);
+    }
+  }, [user, likes, retweets]);
 
   const svg = [
     {
@@ -43,16 +68,15 @@ function TweetCard(data: any) {
     },
     {
       iconName: "RepostIcon",
-      fillColor: "group-hover:fill-accent-green",
-      textColor: "group-hover:text-accent-green",
+      fillColor: isRetweeted
+        ? "fill-accent-green"
+        : "group-hover:fill-accent-green",
+      textColor: isRetweeted
+        ? "text-accent-green"
+        : "group-hover:text-accent-green",
       bgColor: "hover:bg-accent-green/30",
-      totalAmount: 23,
-      onClick: (e: any) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // Your logic for handling a repost click
-        console.log("Repost clicked!");
-      },
+      totalAmount: _count.retweets !== 0 ? _count.retweets : "",
+      onClick: (e: any) => handleRetweet(e, id),
     },
     {
       iconName: isLiked ? "SolidLikeIcon" : "LikeIcon",
@@ -61,7 +85,7 @@ function TweetCard(data: any) {
       textColor: isLiked
         ? "group-hover:text-accent-pink text-accent-pink"
         : "group-hover:text-accent-pink",
-      totalAmount: data.data._count.likes,
+      totalAmount: _count.likes !== 0 ? _count.likes : "",
       onClick: (e: any) => handleLikeClick(e, id),
     },
     {
@@ -77,19 +101,24 @@ function TweetCard(data: any) {
       e.preventDefault();
       e.stopPropagation();
 
-      if (isLiked) {
-        await unlikeTweet(tweetId);
-
-        setIsLiked((prevIsLiked) => !prevIsLiked);
-        data.data._count.likes -= 1;
-      } else {
-        await likeTweet(tweetId);
-
-        setIsLiked((prevIsLiked) => !prevIsLiked);
-        data.data._count.likes += 1;
-      }
+      await likeTweet(tweetId);
+      setIsLiked((prevIsLiked) => !prevIsLiked);
+      _count.likes = isLiked ? _count.likes - 1 : _count.likes + 1;
     },
-    [isLiked, likeTweet, unlikeTweet, unlikeStatus, likeStatus, data]
+    [likeTweet, _count.likes, isLiked]
+  );
+
+  const handleRetweet = useCallback(
+    async (e: any, tweetId: number) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      await retweet(tweetId);
+
+      setIsRetweeted((prevIsRetweeted) => !prevIsRetweeted);
+      _count.retweets = isRetweeted ? _count.retweets - 1 : _count.retweets + 1;
+    },
+    [retweet, _count.retweets, isRetweeted]
   );
 
   const imageGridStyles: any = {
@@ -101,7 +130,7 @@ function TweetCard(data: any) {
 
   return (
     <Link
-      href={`/posts/${id}`}
+      href={`/tweet/${id}`}
       className="cursor-pointer relative flex flexcol gap-y-4 px-4 py-3  outline-none duration-200 border-b border-light-border dark:border-dark-border"
     >
       <div className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 ">
@@ -121,7 +150,7 @@ function TweetCard(data: any) {
                 username
               </div>
               <div className="truncate text-light-secondary dark:text-dark-secondary">
-                @staynaughty
+                @{author.username}
               </div>
               <div className="flex gap-1">
                 <i>·</i>
@@ -145,7 +174,7 @@ function TweetCard(data: any) {
 
           <div
             className={`items-center w-full mt-2 rounded-2xl overflow-hidden p-0 ${
-              imageGridStyles[data?.data?.images?.length] || ""
+              imageGridStyles[data?.images?.length] || ""
             }`}
           >
             {images.length !== 3 ? (
