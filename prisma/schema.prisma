@@ -8,52 +8,47 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  username  String    @unique
-  email     String    @unique
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
   password  String
   name      String?
   bio       String?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   token     String?
-  comments  Comment[]
-  likes     Like[]
-  tweets    Tweet[]   @relation("userTweets")
-  retweets  Retweet[]
+  tweets    Tweet[]  @relation("UserTweets")
+
+  likes   Like[]
+  Retweet Retweet[]
 }
 
 model Tweet {
   id        Int       @id @default(autoincrement())
-  content   String
+  content   String?
   authorId  Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  images    Image[]
-  comments  Comment[] @relation("commentTweets")
+  images    Image[]   @relation("TweetImage")
   likes     Like[]
-  author    User      @relation("userTweets", fields: [authorId], references: [id])
   retweets  Retweet[]
+
+  replyToId   Int?    @map("reply_to_id")
+  parent      Tweet?  @relation("ParentTweet", fields: [replyToId], references: [id])
+  replies     Tweet[] @relation("ParentTweet")
+  replyImages Image[] @relation("ReplyImage")
+  author      User    @relation("UserTweets", fields: [authorId], references: [id])
 }
 
 model Image {
   id        Int      @id @default(autoincrement())
-  tweetId   Int
+  tweetId   Int?
+  replyId   Int?
   url       String
   createdAt DateTime @default(now())
 
-  tweet Tweet @relation(fields: [tweetId], references: [id])
-}
-
-model Comment {
-  id        Int      @id @default(autoincrement())
-  content   String
-  tweetId   Int
-  authorId  Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
-  tweet     Tweet    @relation("commentTweets", fields: [tweetId], references: [id])
+  tweet Tweet? @relation(name: "TweetImage", fields: [tweetId], references: [id])
+  reply Tweet? @relation(name: "ReplyImage", fields: [replyId], references: [id])
 }
 
 model Like {
