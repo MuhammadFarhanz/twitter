@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useGetUser } from "@/api/useGetUser";
 import { useLikeTweet } from "@/api/useLikeTweet";
 import { useRetweet } from "@/api/useRetweet";
+import ReplyDialog from "./reply-dialog";
+import { useGetTweetById } from "@/api/useGetTweetById";
 
 type TweetCardProps = {
   data: {
@@ -16,6 +18,7 @@ type TweetCardProps = {
     _count: {
       likes: number;
       retweets: number;
+      replies: number;
     };
     author: {
       id: number;
@@ -29,25 +32,24 @@ type TweetCardProps = {
 function TweetCard({ data }: TweetCardProps) {
   const { content, images, id, likes, retweets, author, _count } = data;
   const [isLiked, setIsLiked] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [isRetweeted, setIsRetweeted] = useState(false);
+  const [tweetId, setTweetId] = useState(0);
 
   const { mutateAsync: likeTweet, status: likeStatus } = useLikeTweet();
   const { mutateAsync: retweet } = useRetweet();
   const { data: user } = useGetUser();
+  // const {id} = useGetTweetById()
 
-  console.log("here", author);
   useEffect(() => {
-    if (user && likes) {
-      const hasUserLiked =
-        user && likes.some((like: any) => like.userId === user.data.id);
-
-      setIsLiked(hasUserLiked);
-    }
-
-    if (user && retweets) {
-      const hasUserRetweeted = retweets.some(
-        (retweet: any) => retweet.userId === user.data.id
+    if (user && user.data) {
+      const hasUserLiked = likes.some(
+        (like: any) => like.userId === user.data.id
       );
+      const hasUserRetweeted = retweets.some(
+        (rt: any) => rt.userId === user.data.id
+      );
+      setIsLiked(hasUserLiked);
       setIsRetweeted(hasUserRetweeted);
     }
   }, [user, likes, retweets]);
@@ -58,13 +60,8 @@ function TweetCard({ data }: TweetCardProps) {
       fillColor: "group-hover:fill-accent-blue",
       textColor: "group-hover:text-accent-blue",
       bgColor: "hover:bg-accent-blue/30",
-      totalAmount: 96,
-      onClick: (e: any) => {
-        e.preventDefault();
-        e.stopPropagation();
-        // Your logic for handling a reply click
-        console.log("Reply clicked!");
-      },
+      totalAmount: _count?.replies !== 0 ? _count?.replies : "",
+      onClick: (e: any) => handleReplyClick(e, id),
     },
     {
       iconName: "RepostIcon",
@@ -75,7 +72,7 @@ function TweetCard({ data }: TweetCardProps) {
         ? "text-accent-green"
         : "group-hover:text-accent-green",
       bgColor: "hover:bg-accent-green/30",
-      totalAmount: _count.retweets !== 0 ? _count.retweets : "",
+      totalAmount: _count?.retweets !== 0 ? _count?.retweets : "",
       onClick: (e: any) => handleRetweet(e, id),
     },
     {
@@ -85,7 +82,7 @@ function TweetCard({ data }: TweetCardProps) {
       textColor: isLiked
         ? "group-hover:text-accent-pink text-accent-pink"
         : "group-hover:text-accent-pink",
-      totalAmount: _count.likes !== 0 ? _count.likes : "",
+      totalAmount: _count?.likes !== 0 ? _count?.likes : "",
       onClick: (e: any) => handleLikeClick(e, id),
     },
     {
@@ -96,6 +93,18 @@ function TweetCard({ data }: TweetCardProps) {
     },
   ];
 
+  const handleReplyClick = async (e: any, tweetId: number) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log(tweetId);
+    setTweetId(tweetId);
+    // const { data } = useGetTweetById(tweetId);
+
+    // console.log(data,'wkowk')
+    setIsOpen(!isOpen);
+  };
+
   const handleLikeClick = useCallback(
     async (e: any, tweetId: number) => {
       e.preventDefault();
@@ -105,7 +114,7 @@ function TweetCard({ data }: TweetCardProps) {
       setIsLiked((prevIsLiked) => !prevIsLiked);
       _count.likes = isLiked ? _count.likes - 1 : _count.likes + 1;
     },
-    [likeTweet, _count.likes, isLiked]
+    [likeTweet, _count?.likes, isLiked]
   );
 
   const handleRetweet = useCallback(
@@ -128,126 +137,139 @@ function TweetCard({ data }: TweetCardProps) {
     4: "grid grid-cols-2 gap-[2px]",
   };
 
-  return (
-    <Link
-      href={`/tweet/${id}`}
-      className="cursor-pointer relative flex flexcol gap-y-4 px-4 py-3  outline-none duration-200 border-b border-light-border dark:border-dark-border"
-    >
-      <div className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 ">
-        <div className="flex flex-col items-center gap-2">
-          <div className="group relative self-start text-light-primary dark:text-dark-primary [&>div]:translate-y-2">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+  const renderImages = () => {
+    if (images.length === 3) {
+      return (
+        <div className={`grid grid-cols-2 gap-[2px]`}>
+          <div className="col-span-1">
+            <img
+              className={`h-80 w-full object-cover`}
+              src={images[0]?.url}
+              alt={`Image 1`}
+            />
+          </div>
+          <div className="col-span-1 grid grid-rows-2 h-full gap-[2px]">
+            {images.slice(1, 3).map((subImage: any, subIndex: any) => (
+              <div key={subIndex} className="row-span-1">
+                <img
+                  className={` w-full object-cover h-[160px]`}
+                  src={subImage?.url}
+                  alt={`Image ${subIndex + 2}`}
+                />
+              </div>
+            ))}
           </div>
         </div>
+      );
+    }
 
-        <div className="flex min-w-0 flex-col text-white">
-          <div className="flex justify-between gap-2 text-light-secondary dark:text-dark-secondary">
-            <div className="flex gap-1 truncate xs:overflow-visible xs:whitespace-normal">
-              <div className="flex items-center gap-1 truncate font-bold custom-underline text-light-primary dark:text-dark-primary">
-                username
-              </div>
-              <div className="truncate text-light-secondary dark:text-dark-secondary">
-                @{author.username}
-              </div>
-              <div className="flex gap-1">
-                <i>·</i>
-                <div className="group relative text-[#8f93a0]">
-                  <div className="custom-underline peer whitespace-nowrap">
-                    2h
+    return images.map((image: any, index: any) => (
+      <img
+        key={index}
+        className={`w-full object-cover`}
+        src={image?.url}
+        alt={`Image ${index + 1}`}
+      />
+    ));
+  };
+
+  return (
+    <>
+      <ReplyDialog isOpen={isOpen} setIsOpen={setIsOpen} id={tweetId} />
+
+      <Link
+        href={`/tweet/${id}`}
+        className="cursor-pointer relative flex flexcol gap-y-4 px-4 py-3  outline-none duration-200 border-b border-light-border dark:border-dark-border"
+      >
+        <div className="grid grid-cols-[auto,1fr] gap-x-3 gap-y-1 w-full">
+          <div className="flex flex-col items-center gap-2">
+            <div className="group relative self-start text-light-primary dark:text-dark-primary">
+              <Avatar>
+                <AvatarImage
+                  src="https://github.com/shadcn.png"
+                  alt="@shadcn"
+                />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            </div>
+          </div>
+
+          <div className="flex min-w-0 flex-col text-white">
+            <div className="flex justify-between gap-2 text-light-secondary dark:text-dark-secondary">
+              <div className="flex gap-1 truncate xs:overflow-visible xs:whitespace-normal">
+                <div className="flex items-center gap-1 truncate font-bold custom-underline text-light-primary dark:text-dark-primary">
+                  username
+                </div>
+                <div className="truncate text-light-secondary dark:text-dark-secondary">
+                  @{author.username}
+                </div>
+                <div className="flex gap-1">
+                  <i>·</i>
+                  <div className="group relative text-[#8f93a0]">
+                    <div className="custom-underline peer whitespace-nowrap">
+                      2h
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="px-2">
-              <CustomIcon
-                iconName="MoreIcon"
-                className="w-5 h-5 fill-[#8f93a0]"
-              />
-            </div>
-          </div>
-          <div className="my-1 text-light-primary dark:text-dark-primary">
-            {content}
-          </div>
-
-          <div
-            className={`items-center w-full mt-2 rounded-2xl overflow-hidden p-0 ${
-              imageGridStyles[data?.images?.length] || ""
-            }`}
-          >
-            {images.length !== 3 ? (
-              images.map((image: any, index: any) => (
-                <img
-                  key={index}
-                  className={`w-full object-cover`}
-                  src={image?.url}
-                  alt={`Image ${index + 1}`}
+              <div className="px-2">
+                <CustomIcon
+                  iconName="MoreIcon"
+                  className="w-5 h-5 fill-[#8f93a0]"
                 />
-              ))
-            ) : (
-              <div className={`grid grid-cols-2 gap-[2px]`}>
-                <div className="col-span-1">
-                  <img
-                    className={`h-80 w-full object-cover`}
-                    src={images[0]?.url}
-                    alt={`Image 1`}
-                  />
-                </div>
-                <div className="col-span-1 grid grid-rows-2 h-full gap-[2px]">
-                  {images.slice(1, 3).map((subImage: any, subIndex: any) => (
-                    <div key={subIndex} className="row-span-1">
-                      <img
-                        className={` w-full object-cover h-[160px]`}
-                        src={subImage?.url}
-                        alt={`Image ${subIndex + 2}`}
+              </div>
+            </div>
+            <div className="my-1 text-light-primary dark:text-dark-primary">
+              {content}
+            </div>
+
+            <div
+              className={`items-center w-full mt-2 rounded-2xl overflow-hidden p-0 ${
+                imageGridStyles[data?.images?.length] || ""
+              }`}
+            >
+              {renderImages()}
+            </div>
+
+            <div className="h-8 bg flex flex-row mt-2">
+              <div className="bg w-[85%] flex flex-row items-center">
+                {svg.map(({ ...data }) => (
+                  <button
+                    key={data.iconName}
+                    onClick={data.onClick}
+                    className=" bg w-1/4 flex flex-row items-end group"
+                  >
+                    <div
+                      className={`flex ${data.bgColor} justify-center rounded-full p-1`}
+                    >
+                      <CustomIcon
+                        iconName={data.iconName as any}
+                        className={`h-5 w-5 fill-[#8f93a0] ${data.fillColor}`}
                       />
                     </div>
-                  ))}
-                </div>
+                    <p
+                      className={`text-xs mb-1 text-[#8f93a0]  ${data.textColor}`}
+                    >
+                      {data.totalAmount}
+                    </p>
+                  </button>
+                ))}
               </div>
-            )}
-          </div>
-
-          <div className="h-8 bg flex flex-row mt-2">
-            <div className="bg w-[85%] flex flex-row items-center">
-              {svg.map(({ ...data }) => (
-                <button
-                  key={data.iconName}
-                  onClick={data.onClick}
-                  className=" bg w-1/4 flex flex-row items-end group"
-                >
-                  <div
-                    className={`flex ${data.bgColor} justify-center rounded-full p-1`}
-                  >
-                    <CustomIcon
-                      iconName={data.iconName as any}
-                      className={`h-5 w-5 fill-[#8f93a0] ${data.fillColor}`}
-                    />
-                  </div>
-                  <p
-                    className={`text-xs mb-1 text-[#8f93a0]  ${data.textColor}`}
-                  >
-                    {data.totalAmount}
-                  </p>
-                </button>
-              ))}
-            </div>
-            <div className="bg-yel0 w-[15%] flex flex-row items-center justify-center">
-              <CustomIcon
-                iconName="BookmarkIcon"
-                className="h-5 w-5 fill-[#8f93a0] mr-4"
-              />
-              <CustomIcon
-                iconName="ShareIcon"
-                className="h-5 w-5 fill-[#8f93a0]"
-              />
+              <div className="bg-yel0 w-[15%] flex flex-row items-center justify-center">
+                <CustomIcon
+                  iconName="BookmarkIcon"
+                  className="h-5 w-5 fill-[#8f93a0] mr-4"
+                />
+                <CustomIcon
+                  iconName="ShareIcon"
+                  className="h-5 w-5 fill-[#8f93a0]"
+                />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Link>
+      </Link>
+    </>
   );
 }
 
