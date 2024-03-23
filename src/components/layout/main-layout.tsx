@@ -1,5 +1,3 @@
-// components/Layout.js
-
 import React, { ReactNode } from "react";
 import { Aside } from "../aside/aside";
 import { Sidebar } from "../sidebar/sidebar";
