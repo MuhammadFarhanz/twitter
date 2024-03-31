@@ -17,7 +17,11 @@ import { useState } from "react";
 import { useCreateUser } from "@/api/useCreateUser";
 import { useLoginUser } from "@/api/useLoginUser";
 import { useRouter } from "next/router";
-import Background from "../../../public/black-and-white.jpg";
+import Background from "../../../public/twitter-banner.png";
+import { Dialog } from "../ui/dialog";
+import { DialogContent } from "@radix-ui/react-dialog";
+import MultistepForm from "./multistep-form";
+import { useDialogStore } from "@/lib/store/dialog";
 
 interface AuthCommonProps {
   title: string;
@@ -37,11 +41,14 @@ export default function AuthCommon({
   showAdditionalContent,
 }: AuthCommonProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const { mutateAsync: createUser, isPending: isCreateUserPending } =
-    useCreateUser();
+  const { openDialog } = useDialogStore();
+  const router = useRouter();
+
   const { mutateAsync: loginUser, isPending: isLoginUserPending } =
     useLoginUser();
-  const router = useRouter();
+
+  const { mutateAsync: createUser, isPending: isCreateUserPending } =
+    useCreateUser();
 
   const formik = useFormik({
     initialValues,
@@ -50,9 +57,18 @@ export default function AuthCommon({
       try {
         if (isSignUp) {
           await createUser(values);
-          router.push("/auth/sign-in");
+
+          const loginData = {
+            email: values.email,
+            password: values.password, // Assuming password is stored in form values
+          };
+
+          await loginUser(loginData);
+          router.push("/home");
+          openDialog();
         } else {
           await loginUser(values);
+
           router.push("/home");
         }
 
@@ -70,49 +86,14 @@ export default function AuthCommon({
 
   return (
     <>
-      {/* <Link
-        href="/examples/authentication"
-        className={cn(
-          buttonVariants({ variant: "ghost" }),
-          "absolute right-4 top-4 md:right-8 md:top-8 hidden md:flex"
-        )}
-      >
-        Login
-      </Link> */}
       <div
-        className="w-full h-full bg-cover relative hidden  flex-col bg-muted p-10 text-white dark:border-r lg:flex"
+        className="w-full h-full bg-cover relative hidden  flex-col bg-muted p-10 text-white lg:flex"
         style={{
           backgroundImage: `url(${Background.src})`,
         }}
-      >
-        <div className="absolute" />
-        <div className="relative z-20 flex items-center text-lg font-medium">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mr-2 h-6 w-6"
-          >
-            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-          </svg>
-          Acme Inc
-        </div>
-        <div className="relative z-20 mt-auto">
-          <blockquote className="space-y-2">
-            <p className="text-lg">
-              &ldquo;Roses are red, Violets are blue, I'm stuck in a loop, But
-              recursion will do. &rdquo;
-            </p>
-            <footer className="text-sm">unknown.</footer>
-          </blockquote>
-        </div>
-      </div>
+      ></div>
 
-      <div className="lg:p-8">
+      <div className="lg:p-8 bg-white h-full items-center flex">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg">
           <Card>
             <CardHeader className="space-y-1">
@@ -257,7 +238,7 @@ export default function AuthCommon({
               className="underline underline-offset-4 hover:text-primary"
             >
               Terms of Service
-            </Link>{" "}
+            </Link>
             and{" "}
             <Link
               href="/privacy"
