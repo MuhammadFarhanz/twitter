@@ -4,6 +4,7 @@ import TextareaInput from "../tweet/input/textarea-input";
 import ImageComponent from "../tweet/ui/image-preview";
 import ImageInput from "../tweet/input/image-input";
 import TweetButton from "../tweet/ui/tweet-button";
+import { useGetUser } from "@/api/useGetUser";
 
 interface TweetFormProps {
   formik: any;
@@ -14,6 +15,7 @@ export const TweetFormFeed = ({
   formik,
   handleFileInputChange,
 }: TweetFormProps) => {
+  const { data: user } = useGetUser();
   const ref = useRef<HTMLTextAreaElement>(null);
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -41,7 +43,7 @@ export const TweetFormFeed = ({
       className="bg-main-background flex flex-col"
     >
       <label className="hover-animation grid w-full gap-3 px-4 py-3 grid-cols-[auto,1fr] border-b border-light-border dark:border-dark-border">
-        <AvatarProfile />
+        <AvatarProfile src={user?.profile_pic} />
 
         <div className="flex w-full flex-col mt-1 ">
           <TextareaInput
