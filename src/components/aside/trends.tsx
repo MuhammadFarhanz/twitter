@@ -4,50 +4,47 @@ import { CustomIcon } from "../ui/custom-icon";
 function Trending() {
   const trendingData = [
     {
-      category: "Technology",
+      category: "UEFA Champions League · Trending",
+      label: "Manchaster United",
+      posts: "790k posts",
+    },
+    {
+      category: "UEFA Champions League · Trending",
+      label: "Dortmund",
+      posts: "176k posts",
+    },
+    {
+      category: "Trending in Sports",
+      label: "Mbappe",
+      posts: "129k posts",
+    },
+    {
+      category: "Trending in Sports",
+      label: "Neymar",
+      posts: "89k posts",
+    },
+    {
+      category: "Trending in Football",
+      label: "Onana",
+      posts: "56k posts",
+    },
+
+    {
+      category: "Trending in Technology",
       label: "Frontend Development",
       posts: "11k posts",
     },
     {
-      category: "Technology",
-      label: "Backend Development",
-      posts: "8k posts",
+      category: "Politics · Trending",
+      label: "Israel",
+      posts: "1.22M posts",
     },
     {
-      category: "Technology",
-      label: "Mobile App Development",
-      posts: "6k posts",
+      category: "Trending in Entertainment",
+      label: "Boruto",
+      posts: "24.2k posts",
     },
-    {
-      category: "Technology",
-      label: "Data Science",
-      posts: "7k posts",
-    },
-    {
-      category: "Design",
-      label: "UI/UX Design",
-      posts: "9k posts",
-    },
-    {
-      category: "Fitness",
-      label: "Fitness & Health",
-      posts: "12k posts",
-    },
-    {
-      category: "Art",
-      label: "Art & Creativity",
-      posts: "8k posts",
-    },
-    {
-      category: "Science",
-      label: "Science & Space",
-      posts: "15k posts",
-    },
-    {
-      category: "Entertainment",
-      label: "Music & Entertainment",
-      posts: "13k posts",
-    },
+
     // Add more topics in different categories as needed
   ];
 
@@ -56,7 +53,7 @@ function Trending() {
       {trendingData.map((trend, index) => (
         <div
           key={index}
-          className="p-0  cursor-pointer  dark:hover:bg-dark-primary/10 hover:bg-light-primary/10 "
+          className="p-0  cursor-pointer dark:hover:bg-dark-primary/10 hover:bg-light-primary/10 "
         >
           <div className="h-20 flex flex-col px-4 justify-center  ">
             <div className="flex flex-row justify-between">
@@ -77,6 +74,9 @@ function Trending() {
           </div>
         </div>
       ))}
+      <p className="px-4 h-14 flex items-center text-main-accent cursor-pointer dark:hover:bg-dark-primary/10 hover:bg-light-primary/10 text-[15px] leading-[20px]">
+        Show more
+      </p>
     </>
   );
 }
