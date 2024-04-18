@@ -14,24 +14,28 @@ import FeedWrapper from "./feed-wrapper";
 import MultistepForm from "../login/multistep-form";
 import { useDialogStore } from "@/lib/store/dialog";
 import Spinner from "../ui/spinner";
+import useWindow from "@/lib/hooks/window-context";
+import FeedHeaderMobile from "./feed-header-mobile";
+import Timeline from "./feed-timeline";
 
 export function Feed(): JSX.Element {
-  const { data } = useGetTweet();
+  // const { data } = useGetTweet();
   const { formik, handleFileInputChange } = useTweetFormLogic({});
   const { isDialogOpen } = useDialogStore();
+  const { isMobile } = useWindow();
 
   return (
     <FeedWrapper>
+      {isMobile && <FeedHeaderMobile />}
       <FeedHeader />
-      <TweetFormFeed
-        formik={formik}
-        handleFileInputChange={handleFileInputChange}
-      />
+      {!isMobile && (
+        <TweetFormFeed
+          formik={formik}
+          handleFileInputChange={handleFileInputChange}
+        />
+      )}
       <MultistepForm isOpen={isDialogOpen} />
-      {!data && <Spinner />}
-      {data?.data.map((tweetData: any) => (
-        <TweetCard key={tweetData.id} data={tweetData} />
-      ))}
+      <Timeline />
     </FeedWrapper>
   );
 }

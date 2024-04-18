@@ -52,6 +52,7 @@ export const TweetFormFeed = ({
             maxLength={500}
             value={formik.values.content}
             onChange={formik.handleChange}
+            placeholder={"What is happening?!"}
           />
 
           <div
@@ -74,7 +75,13 @@ export const TweetFormFeed = ({
             <div className="flex items-center justify-center text-main-accent ">
               <ImageInput handleFileInputChange={handleFileInputChange} />
             </div>
-            <TweetButton />
+            <TweetButton
+              disable={
+                formik.values.content || formik.values.images.length != 0
+                  ? false
+                  : true
+              }
+            />
           </div>
         </div>
       </label>
