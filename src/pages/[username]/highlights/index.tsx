@@ -4,13 +4,14 @@ import { Sidebar } from "@/components/sidebar/sidebar";
 import Profile from "../../../components/user/profile";
 import { useRouter } from "next/router";
 import { useGetReplies } from "@/api/useGetReplies";
-
 import TweetCard from "@/components/tweet/tweet-card";
 import { useGetUserByUsername } from "@/api/useGetUserByUsername";
+import Image from "next/image";
 
-export default function Replies() {
+export default function Highlights() {
   const router = useRouter();
   const { username } = router.query;
+
   const { data: user, isError, refetch } = useGetUserByUsername(username);
 
   return (
@@ -23,22 +24,7 @@ export default function Replies() {
             isError={isError}
             refetch={refetch}
           >
-            {user?.replies?.map((item: any) => (
-              <div key={item.id}>
-                {item.parent && (
-                  <>
-                    <TweetCard
-                      key={item.parent.id}
-                      data={item.parent}
-                      isRelate={true}
-                    />
-                  </>
-                )}
-                <div>
-                  <TweetCard key={item.id} data={item} />
-                </div>
-              </div>
-            ))}
+            <div className="bg-main-background"></div>
           </Profile>
         </Layout>
       </div>
