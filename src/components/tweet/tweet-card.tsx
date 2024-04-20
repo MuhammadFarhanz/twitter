@@ -67,40 +67,19 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
     createdAt,
   } = data;
   const router = useRouter();
-  const [isLiked, setIsLiked] = useState(false);
-  const [isReplyDialogOpen, setIsReplyDialogOpen] = useState(false);
-  const [isRetweeted, setIsRetweeted] = useState(false);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const [isLiked, setLiked] = useState(false);
+  const [isReplyDialogOpen, setReplyDialogOpen] = useState(false);
+  const [isRetweeted, setRetweeted] = useState(false);
+  const [isBookmarked, setBookmarked] = useState(false);
   const [tweetId, setTweetId] = useState(0);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
-  // const {
-  //   isLiked,
-  //   isReplyDialogOpen,
-  //   isRetweeted,
-  //   isBookmarked,
-  //   tweetId,
-  //  // imageDialogOpen,
-  //   // selectedImageId,
-  //   setIsLiked,
-  //   setIsReplyDialogOpen,
-  //   setIsRetweeted,
-  //   setIsBookmarked,
-  //   setTweetId,
-  //   //setImageDialogOpen,
-  //   // setSelectedImageId,
-  // } = useTweetStore();
 
   const { mutateAsync: likeTweet, status: likeStatus } = useLikeTweet();
   const { mutateAsync: bookmarkTweet } = useBookmarkTweet();
   const { mutateAsync: retweet } = useRetweet();
   const { data: user } = useGetUser();
-  const renderCountRef = useRef(0);
-
-  useEffect(() => {
-    renderCountRef.current += 1;
-    console.log("Component re-rendered:", renderCountRef.current);
-  });
 
   useEffect(() => {
     if (user) {
@@ -112,9 +91,9 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
         (bookmark: any) => bookmark.userId == user.id
       );
 
-      setIsBookmarked(hasUserBookmark);
-      setIsLiked(hasUserLiked);
-      setIsRetweeted(hasUserRetweeted);
+      setBookmarked(hasUserBookmark);
+      setLiked(hasUserLiked);
+      setRetweeted(hasUserRetweeted);
     }
   }, [user, likedBy, retweetedBy]);
 
@@ -166,7 +145,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
     // const { data } = useGetTweetById(tweetId);
 
     // console.log(data,'wkowk')
-    setIsReplyDialogOpen(!isReplyDialogOpen);
+    setReplyDialogOpen(!isReplyDialogOpen);
   };
 
   const handleLikeClick = useCallback(
@@ -175,7 +154,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
       e.stopPropagation();
 
       await likeTweet(tweetId);
-      setIsLiked(!isLiked);
+      setLiked(!isLiked);
       _count.likedBy = isLiked ? _count?.likedBy - 1 : _count?.likedBy + 1;
     },
     [likeTweet, _count?.likedBy, isLiked]
@@ -188,7 +167,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
 
       await retweet(tweetId);
 
-      setIsRetweeted(!setIsRetweeted);
+      setRetweeted(!setRetweeted);
       _count.retweetedBy = isRetweeted
         ? _count?.retweetedBy - 1
         : _count?.retweetedBy + 1;
@@ -199,16 +178,8 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
   const handleBookmark = async (e: any, tweetId: number) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log(tweetId, "bjirr");
 
     await bookmarkTweet(tweetId);
-  };
-
-  const imageGridStyles: any = {
-    1: "grid-rows-1",
-    2: "grid grid-cols-2 grid-rows-1 gap-[2px]",
-    3: "w-full h-80",
-    4: "grid grid-cols-2 gap-[2px]",
   };
 
   const handleAuthorClick: MouseEventHandler<HTMLDivElement> = (e) => {
@@ -217,104 +188,18 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
     // Navigate programmatically if needed
     router.push(`/${author.username}`);
   };
-
-  // const renderImages = () => {
-  //   // const [selectedImageId, setSelectedImageId] = useState(null);
-
-  //   // const [dialogOpen, setDialogOpen] = useState(false);
-
-  //   const handleClick = (e: any, imageId: any) => {
-  //     e.preventDefault();
-  //     e.stopPropagation();
-
-  //     console.log("asuuu");
-  //     setSelectedImageId(imageId);
-  //     setImageDialogOpen(true);
-  //   };
-
-  //   if (images?.length === 3) {
-  //     return (
-  //       <Dialog>
-  //         <div className={`grid grid-cols-2 gap-[2px]`}>
-  //           <div className="col-span-1">
-  //             <DialogTrigger asChild>
-  //               <img
-  //                 className={`h-80 w-full object-cover`}
-  //                 src={images[0]?.url}
-  //                 alt={`Image 1`}
-  //                 onClick={(e) => handleClick(e, images[0]?.id)}
-  //               />
-  //             </DialogTrigger>
-  //           </div>
-  //           <div className="col-span-1 grid grid-rows-2 h-full gap-[2px]">
-  //             {images.slice(1, 3).map((subImage: any, subIndex: any) => (
-  //               <DialogTrigger asChild>
-  //                 <img
-  //                   className={` w-full object-cover h-[160px]`}
-  //                   src={subImage?.url}
-  //                   alt={`Image ${subIndex + 2}`}
-  //                   onClick={(e) => handleClick(e, subImage?.id)}
-  //                 />
-  //               </DialogTrigger>
-  //             ))}
-  //           </div>
-  //         </div>
-  //       </Dialog>
-  //     );
-  //   }
-
-  //   return images?.map((image: any, index: any) => (
-  //     <Dialog>
-  //       <img
-  //         key={index}
-  //         className={`w-full object-cover`}
-  //         src={image?.url}
-  //         alt={`Image ${index + 1}`}
-  //         onClick={(e) => handleClick(e, image?.id)}
-  //       />
-  //     </Dialog>
-  //   ));
-  // };
-
-  // const ImageDialog = ({
-  //   isOpen,
-  //   setImageDialogOpen,
-  //   selectedImageId,
-  // }: any) => {
-  //   const imageUrl = images?.find(
-  //     (image: any) => image.id === selectedImageId
-  //   )?.url;
-
-  //   return (
-  //     <Dialog open={isOpen} onOpenChange={setImageDialogOpen}>
-  //       <DialogOverlay className="flex items-center justify-center">
-  //         <DialogContent
-  //         // onInteractOutside={() => setImageDialogOpen(false)}
-  //         // className="flex bg-black bg-opacity-75 w-full h-full items-center justify-center"
-  //         >
-  //           <img
-  //             className="w-[800px]  sm:max-h-[90vh] rounded-xl"
-  //             src={imageUrl}
-  //             alt={`Selected Image`}
-  //           />
-  //           <a
-  //             href={imageUrl}
-  //             target="_blank"
-  //             className="ml-2 text-dark-primary"
-  //           >
-  //             Open original
-  //           </a>
-  //         </DialogContent>
-  //       </DialogOverlay>
-  //     </Dialog>
-  //   );
-  // };
+  const imageGridStyles: any = {
+    1: "grid-rows-1",
+    2: "grid grid-cols-2 grid-rows-1 gap-[2px]",
+    3: "w-full h-80",
+    4: "grid grid-cols-2 gap-[2px]",
+  };
 
   return (
     <>
       <ReplyDialog
         isOpen={isReplyDialogOpen}
-        setIsOpen={setIsReplyDialogOpen}
+        setIsOpen={setReplyDialogOpen}
         id={tweetId}
       />
 
