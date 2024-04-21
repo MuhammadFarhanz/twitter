@@ -19,9 +19,9 @@ function Timeline() {
   return (
     <>
       {data?.pages?.map((page) =>
-        page?.data?.results?.map((tweetData: any, index: number) => {
+        page?.data?.map((tweetData: any, index: number) => {
           // if the last element in the page is in view, add a ref to it
-          if (page.data.results.length === index + 1) {
+          if (page.data.length === index + 1) {
             return (
               <>
                 <TweetCard key={tweetData.id} data={tweetData} />
