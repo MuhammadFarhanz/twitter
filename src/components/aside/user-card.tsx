@@ -9,7 +9,7 @@ function UserCard({ user }: any) {
         <div className="grow-0">
           <AvatarProfile src={user?.profile_pic} />
         </div>
-        <div className="flex-row grow truncate mx-2 mr-8 xl:flex hidden">
+        <div className="flex-row grow truncate mx-2 mr-8">
           <div className="flex-col text-left  ">
             <p className="text-light-primary  dark:text-dark-primary truncate font-semibold">
               {user?.name}
