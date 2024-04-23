@@ -1,17 +1,17 @@
-import { Aside } from "@/components/aside/aside";
 import Layout from "@/components/layout/main-layout";
-import { Sidebar } from "@/components/sidebar/sidebar";
 import Profile from "../../../components/user/profile";
 import { useRouter } from "next/router";
-import { useGetReplies } from "@/api/useGetReplies";
 import TweetCard from "@/components/tweet/tweet-card";
 import { useGetUserByUsername } from "@/api/useGetUserByUsername";
 import Image from "next/image";
+import useUserStore from "@/lib/store/user-store";
 
 export default function Likes() {
   const router = useRouter();
   const { username } = router.query;
   const { data: user, isError, refetch } = useGetUserByUsername(username);
+
+  const { setIsFollowing, isFollowing } = useUserStore();
 
   return (
     <main className="bg-orange-400">
@@ -22,6 +22,8 @@ export default function Likes() {
             user={user}
             isError={isError}
             refetch={refetch}
+            setIsFollowing={setIsFollowing}
+            isFollowing={isFollowing}
           >
             {user?.likedTweets.length == 0 && (
               <div className="items-center flex flex-col">

@@ -7,11 +7,13 @@ import { useGetReplies } from "@/api/useGetReplies";
 import TweetCard from "@/components/tweet/tweet-card";
 import { useGetUserByUsername } from "@/api/useGetUserByUsername";
 import Image from "next/image";
+import useUserStore from "@/lib/store/user-store";
 
 export default function Media() {
   const router = useRouter();
   const { username } = router.query;
   const { data: user, isError, refetch } = useGetUserByUsername(username);
+  const { setIsFollowing, isFollowing } = useUserStore();
 
   return (
     <main className="bg-orange-400">
@@ -22,35 +24,29 @@ export default function Media() {
             user={user}
             isError={isError}
             refetch={refetch}
+            setIsFollowing={setIsFollowing}
+            isFollowing={isFollowing}
           >
-            {user?.likedTweets.length == 0 && (
-              <div className="items-center flex flex-col">
-                <Image
-                  src={"/assets/no-media.png"}
-                  width={400}
-                  height={200}
-                  sizes="100vw"
-                  priority
-                  className="w-[400px] h-[200px] mt-4 object-cover bg-slate0"
-                  alt="No bookmarks"
-                />
-                <div className="flex items-center justify-center flex-col">
-                  <h1 className="font-black text-3xl mb-1">
-                    Lights, camera ... <br />
-                    attachments!
-                  </h1>
-                  <p className="text-dark-secondary  whitespace-pre-wrap break-words ">
-                    When you post photos or videos, they will show up here.
-                  </p>
-                  {/* <p className="text-dark-secondary  whitespace-pre-wrap break-words ">
-                    When you do, it'll show up here.
-                  </p> */}
-                </div>
+            <div className="items-center flex flex-col">
+              <Image
+                src={"/assets/no-media.png"}
+                width={400}
+                height={200}
+                sizes="100vw"
+                priority
+                className="w-[400px] h-[200px] mt-4 object-cover bg-slate0"
+                alt="No bookmarks"
+              />
+              <div className="flex items-center justify-center flex-col">
+                <h1 className="font-black text-3xl mb-1">
+                  Lights, camera ... <br />
+                  attachments!
+                </h1>
+                <p className="text-dark-secondary  whitespace-pre-wrap break-words ">
+                  When you post photos or videos, they will show up here.
+                </p>
               </div>
-            )}
-            {/* {user?.likedTweets?.map((tweetData: any) => (
-              <TweetCard key={tweetData.id} data={tweetData.tweet} />
-            ))} */}
+            </div>
           </Profile>
         </Layout>
       </div>

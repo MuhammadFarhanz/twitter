@@ -7,12 +7,14 @@ import { useGetReplies } from "@/api/useGetReplies";
 import TweetCard from "@/components/tweet/tweet-card";
 import { useGetUserByUsername } from "@/api/useGetUserByUsername";
 import Image from "next/image";
+import useUserStore from "@/lib/store/user-store";
 
 export default function Highlights() {
   const router = useRouter();
   const { username } = router.query;
 
   const { data: user, isError, refetch } = useGetUserByUsername(username);
+  const { setIsFollowing, isFollowing } = useUserStore();
 
   return (
     <main className="bg-orange-400">
@@ -23,6 +25,8 @@ export default function Highlights() {
             user={user}
             isError={isError}
             refetch={refetch}
+            setIsFollowing={setIsFollowing}
+            isFollowing={isFollowing}
           >
             <div className="bg-main-background"></div>
           </Profile>

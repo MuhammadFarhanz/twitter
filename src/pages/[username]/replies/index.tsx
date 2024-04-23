@@ -7,11 +7,14 @@ import { useGetReplies } from "@/api/useGetReplies";
 
 import TweetCard from "@/components/tweet/tweet-card";
 import { useGetUserByUsername } from "@/api/useGetUserByUsername";
+import useUserStore from "@/lib/store/user-store";
 
 export default function Replies() {
   const router = useRouter();
   const { username } = router.query;
   const { data: user, isError, refetch } = useGetUserByUsername(username);
+
+  const { setIsFollowing, isFollowing } = useUserStore();
 
   return (
     <main className="bg-orange-400">
@@ -22,6 +25,8 @@ export default function Replies() {
             user={user}
             isError={isError}
             refetch={refetch}
+            setIsFollowing={setIsFollowing}
+            isFollowing={isFollowing}
           >
             {user?.replies?.map((item: any) => (
               <div key={item.id}>
