@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import { useCreateTweet } from "@/api/useCreateTweet";
-import { handleFileChange } from "../utils/handleChangeFile";
+import { handleFileChange } from "./handleChangeFile";
 
 interface TweetFormValues {
   content: string;
