@@ -37,7 +37,7 @@ export default function Likes() {
                   alt="No bookmarks"
                 />
                 <div className="flex items-center justify-center flex-col">
-                  <h1 className="font-black text-3xl mb-1">
+                  <h1 className="font-black text-2xl sm:text-3xl mb-1">
                     You don't have any likes yet
                   </h1>
                   <p className="text-dark-secondary  whitespace-pre-wrap break-words ">

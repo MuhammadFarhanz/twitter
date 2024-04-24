@@ -79,7 +79,7 @@ const Profile = memo(
           )}
 
           {isError && <NotFound />}
-          {!user?.tweets?.length && !isError && <Spinner />}
+          {!user && !isError && <Spinner />}
 
           {children ? (
             children

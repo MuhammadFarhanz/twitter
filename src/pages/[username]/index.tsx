@@ -27,24 +27,13 @@ export default function Profiles() {
         >
           {user?.tweets.length == 0 && (
             <div className="items-center flex flex-col">
-              <Image
-                src={"/assets/no-retweets.png"}
-                width={400}
-                height={200}
-                sizes="100vw"
-                priority
-                className="w-[400px] h-[200px] mt-4 object-cover bg-slate0"
-                alt="No bookmarks"
-              />
-              <div className="flex items-center justify-center flex-col">
-                <h1 className="font-black text-3xl mb-1">
-                  You don't have any tweet yet
+              <div className="flex items-center mt-6 justify-center flex-col">
+                <h1 className="font-black text-2xl sm:text-3xl mb-1">
+                  @{user?.username} hasn't tweeted
                 </h1>
+
                 <p className="text-dark-secondary  whitespace-pre-wrap break-words ">
-                  {/* Tap the heart on any Tweet to show it some love. */}
-                </p>
-                <p className="text-dark-secondary  whitespace-pre-wrap break-words ">
-                  When you do, it'll show up here.
+                  When they do, their Tweets will show up here.
                 </p>
               </div>
             </div>

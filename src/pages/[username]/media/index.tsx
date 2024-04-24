@@ -1,10 +1,6 @@
-import { Aside } from "@/components/aside/aside";
 import Layout from "@/components/layout/main-layout";
-import { Sidebar } from "@/components/sidebar/sidebar";
 import Profile from "../../../components/user/profile";
 import { useRouter } from "next/router";
-import { useGetReplies } from "@/api/useGetReplies";
-import TweetCard from "@/components/tweet/tweet-card";
 import { useGetUserByUsername } from "@/api/useGetUserByUsername";
 import Image from "next/image";
 import useUserStore from "@/lib/store/user-store";
@@ -38,7 +34,7 @@ export default function Media() {
                 alt="No bookmarks"
               />
               <div className="flex items-center justify-center flex-col">
-                <h1 className="font-black text-3xl mb-1">
+                <h1 className="font-black text-2xl sm:text-3xl mb-1">
                   Lights, camera ... <br />
                   attachments!
                 </h1>
