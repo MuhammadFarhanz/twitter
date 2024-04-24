@@ -41,7 +41,11 @@ export default function AuthCommon({
   const router = useRouter();
 
   const { mutateAsync: loginUser, isPending: isLoginUserPending } =
-    useLoginUser();
+    useLoginUser({
+      onSuccess: () => {
+        router.push("/home");
+      },
+    });
 
   const { mutateAsync: createUser, isPending: isCreateUserPending } =
     useCreateUser();
@@ -60,12 +64,9 @@ export default function AuthCommon({
           };
 
           await loginUser(loginData);
-          router.push("/home");
           openDialog();
         } else {
           await loginUser(values);
-
-          router.push("/home");
         }
 
         resetForm();

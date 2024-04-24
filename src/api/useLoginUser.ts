@@ -6,10 +6,11 @@ interface Values {
   password: string;
 }
 
-export const useLoginUser = () => {
+export const useLoginUser = ({ onSuccess }: any) => {
   return useMutation({
     mutationFn: async (body: Values) => {
       return await axiosInstance.post("/api/users/login", body);
     },
+    onSuccess,
   });
 };
