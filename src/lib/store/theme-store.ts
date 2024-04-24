@@ -4,7 +4,7 @@ export type Theme = "light" | "dim" | "dark";
 export type Accent = "blue" | "yellow" | "pink" | "purple" | "orange" | "green";
 
 type ThemeStore = {
-  theme: any;
+  theme: Theme;
   accent: any;
   changeTheme: (value: Theme) => void;
   changeAccent: (value: any) => void;

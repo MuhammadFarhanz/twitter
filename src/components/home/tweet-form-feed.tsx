@@ -5,7 +5,7 @@ import ImageComponent from "../tweet/ui/image-preview";
 import ImageInput from "../tweet/input/image-input";
 import TweetButton from "../tweet/ui/tweet-button";
 import { useGetUser } from "@/api/useGetUser";
-import useTweetFormLogic from "../tweet/service/useTweetForm";
+import useTweetFormLogic from "../tweet/utils/useTweetForm";
 
 export const TweetFormFeed = () => {
   const { formik, handleFileInputChange } = useTweetFormLogic({});

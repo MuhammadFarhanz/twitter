@@ -4,7 +4,7 @@ import { Sidebar } from "../sidebar/sidebar";
 
 const Layout = ({ children }: any) => {
   return (
-    <div className="flex w-full justify-center gap-0  bg-main-background">
+    <div className="flex w-full justify-center gap-0 bg-main-background">
       <Sidebar />
       {children}
       <Aside />
