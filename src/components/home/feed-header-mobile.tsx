@@ -141,7 +141,10 @@ function FeedHeaderMobile() {
           </div>
           <div>
             {navLinks.map(({ ...linkData }) => (
-              <div className={cn("group bg-emerald-0 outline-none")}>
+              <div
+                key={linkData?.linkName}
+                className={cn("group bg-emerald-0 outline-none")}
+              >
                 <Link
                   href={linkData.href as string}
                   className={cn(

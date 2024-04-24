@@ -38,6 +38,7 @@ const RenderImages: React.FC<RenderImagesProps> = ({
             <div className="col-span-1 grid grid-rows-2 h-full gap-[2px]">
               {images.slice(1, 3).map((subImage: any, subIndex: number) => (
                 <img
+                  key={subIndex}
                   className="w-full object-cover h-[160px] cursor-pointer"
                   src={subImage?.url}
                   alt={`Image ${subIndex + 2}`}

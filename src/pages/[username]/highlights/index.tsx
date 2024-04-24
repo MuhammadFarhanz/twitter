@@ -1,12 +1,7 @@
-import { Aside } from "@/components/aside/aside";
 import Layout from "@/components/layout/main-layout";
-import { Sidebar } from "@/components/sidebar/sidebar";
 import Profile from "../../../components/user/profile";
 import { useRouter } from "next/router";
-import { useGetReplies } from "@/api/useGetReplies";
-import TweetCard from "@/components/tweet/tweet-card";
 import { useGetUserByUsername } from "@/api/useGetUserByUsername";
-import Image from "next/image";
 import useUserStore from "@/lib/store/user-store";
 
 export default function Highlights() {

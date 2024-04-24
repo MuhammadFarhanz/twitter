@@ -158,7 +158,10 @@ function MoreSettings() {
                       <div className="bg-dark-primary/10 h-16 flex flex-row items-center rounded-lg">
                         <RadioGroup className="flex flex-row w-full gap-3 ">
                           {colors.map((color, index) => (
-                            <div className={`flex justify-center w-1/6 `}>
+                            <div
+                              key={index}
+                              className={`flex justify-center w-1/6 `}
+                            >
                               <RadioGroupItem
                                 onClick={() =>
                                   changeAccent(color.replace("bg-accent-", ""))

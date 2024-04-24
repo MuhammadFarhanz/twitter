@@ -75,7 +75,7 @@ export function Aside(): JSX.Element {
           <div className="h-full">
             {data?.map((item: any) => {
               return (
-                <Link href={`/${item?.username}`}>
+                <Link key={item?.id} href={`/${item?.username}`}>
                   <UserCard user={item} />
                 </Link>
               );

@@ -49,7 +49,7 @@ type TweetCardProps = {
     };
   };
 };
-
+/* eslint-disable react/display-name */
 const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
   const {
     content,

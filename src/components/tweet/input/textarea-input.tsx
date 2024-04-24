@@ -1,7 +1,7 @@
 import React, { forwardRef, ChangeEvent } from "react";
 import { Textarea } from "../../ui/textarea";
 import clsx from "clsx";
-
+/* eslint-disable react/display-name */
 const TextareaInput = forwardRef<
   HTMLTextAreaElement,
   {

@@ -9,7 +9,7 @@ import Spinner from "../ui/spinner";
 import ProfileHeader from "./profile-header";
 import ProfileAvatarWithFollowButton from "./profile-avatar-with-button";
 import ProfileDetails from "./profile-details";
-
+/* eslint-disable react/display-name */
 const Profile = memo(
   ({ children, user, isError, refetch, setIsFollowing, isFollowing }: any) => {
     const router = useRouter();

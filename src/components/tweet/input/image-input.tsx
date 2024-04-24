@@ -29,7 +29,7 @@ function ImageInput(props: ImageInputProps) {
   return (
     <div className="flex items-center justify-center text-main-accent xs:[&>button:nth-child(n+6)]:hidden md:[&>button]:!block [&>button:nth-child(n+4)]:hidden">
       {svg.map(({ ...data }, index) => (
-        <label className="flex items-center">
+        <label key={index} className="flex items-center">
           <input
             className="hidden"
             type="file"
