@@ -8,6 +8,12 @@ module.exports = {
     "app/**/*.{ts,tsx}",
     "src/**/*.{ts,tsx}",
   ],
+  variants: {
+    extend: {
+      backgroundColor: ["active", "hover", "disabled"],
+      cursor: ["disabled"],
+    },
+  },
   theme: {
     container: {
       center: true,

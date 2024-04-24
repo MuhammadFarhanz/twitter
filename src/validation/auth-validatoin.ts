@@ -4,7 +4,7 @@ export const signupValidationSchema = Yup.object().shape({
   username: Yup.string()
     .required("Username is required")
     .min(3, "Username must be at least 3 characters long")
-    .max(50, "Username cannot be longer than 50 characters"),
+    .max(20, "Username cannot be longer than 20 characters"),
 
   email: Yup.string()
     .required("Email is required")
@@ -14,7 +14,7 @@ export const signupValidationSchema = Yup.object().shape({
   password: Yup.string()
     .required("Password is required")
     .min(8, "Password must be at least 8 characters long")
-    .max(50, "Password cannot be longer than 50 characters"),
+    .max(20, "Password cannot be longer than 20 characters"),
 });
 
 export const signinValidationSchema = Yup.object().shape({
@@ -26,5 +26,5 @@ export const signinValidationSchema = Yup.object().shape({
   password: Yup.string()
     .required("Password is required")
     .min(8, "Password must be at least 8 characters long")
-    .max(50, "Password cannot be longer than 50 characters"),
+    .max(20, "Password cannot be longer than 20 characters"),
 });
