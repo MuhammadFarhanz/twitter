@@ -5,12 +5,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { CustomIcon } from "../ui/custom-icon";
 import Link from "next/link";
 import { useGetUser } from "@/api/useGetUser";
-import { useLikeTweet } from "@/api/useLikeTweet";
-import { useRetweet } from "@/api/useRetweet";
 import ReplyDialog from "./reply-dialog";
 import { useGetTweetById } from "@/api/useGetTweetById";
 import { useRouter } from "next/router";
@@ -20,15 +17,14 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import FollowButton from "../user/follow-button";
+
 import UserHoverCard from "./user-hover-card";
-import { useBookmarkTweet } from "@/api/useBookmarkTweet";
-import { formatTimeAgo } from "./utils/formatTime";
-import { DialogContent } from "@radix-ui/react-dialog";
-import { Dialog, DialogOverlay, DialogTrigger } from "../ui/dialog";
 import RenderImages from "./render-images";
 import ImageDialog from "./images-dialog";
-import useTweetStore from "@/lib/store/tweet-store";
+
+import IconButton from "./icon-button";
+import TweetHeader from "./tweet-card-header";
+import useTweetCardHandlers from "./utils/useTweetCardHandlers";
 
 type TweetCardProps = {
   data: {
@@ -66,6 +62,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
     _count,
     createdAt,
   } = data;
+
   const router = useRouter();
 
   const [isLiked, setLiked] = useState(false);
@@ -76,16 +73,26 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
 
-  const { mutateAsync: likeTweet, status: likeStatus } = useLikeTweet();
-  const { mutateAsync: bookmarkTweet } = useBookmarkTweet();
-  const { mutateAsync: retweet } = useRetweet();
   const { data: user } = useGetUser();
+  const handlers = useTweetCardHandlers({
+    isLiked,
+    isRetweeted,
+    isBookmarked,
+    _count,
+    author,
+    setLiked,
+    setRetweeted,
+    setBookmarked,
+    setTweetId,
+    setReplyDialogOpen,
+    router,
+  });
 
   useEffect(() => {
     if (user) {
       const hasUserLiked = likedBy?.some((like: any) => like.userId == user.id);
       const hasUserRetweeted = retweetedBy?.some(
-        (rt: any) => rt.userId === user.id
+        (rt: any) => rt.userId == user.id
       );
       const hasUserBookmark = bookmarkedBy?.some(
         (bookmark: any) => bookmark.userId == user.id
@@ -104,7 +111,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
       textColor: "group-hover:text-accent-blue",
       bgColor: "hover:bg-accent-blue/30",
       totalAmount: _count?.replies !== 0 ? _count?.replies : "",
-      onClick: (e: any) => handleReplyClick(e, id),
+      onClick: (e: any) => handlers.handleReplyClick(e, id),
     },
     {
       iconName: "RepostIcon",
@@ -116,7 +123,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
         : "group-hover:text-accent-green",
       bgColor: "hover:bg-accent-green/30",
       totalAmount: _count?.retweetedBy !== 0 ? _count?.retweetedBy : "",
-      onClick: (e: any) => handleRetweet(e, id),
+      onClick: (e: any) => handlers.handleRetweet(e, id),
     },
     {
       iconName: isLiked ? "SolidLikeIcon" : "LikeIcon",
@@ -126,7 +133,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
         ? "group-hover:text-accent-pink text-accent-pink"
         : "group-hover:text-accent-pink",
       totalAmount: _count?.likedBy !== 0 ? _count?.likedBy : "",
-      onClick: (e: any) => handleLikeClick(e, id),
+      onClick: (e: any) => handlers.handleLikeClick(e, id),
     },
     {
       iconName: "ViewIcon",
@@ -136,58 +143,6 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
     },
   ];
 
-  const handleReplyClick = async (e: any, tweetId: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log(tweetId);
-    setTweetId(tweetId);
-    // const { data } = useGetTweetById(tweetId);
-
-    // console.log(data,'wkowk')
-    setReplyDialogOpen(!isReplyDialogOpen);
-  };
-
-  const handleLikeClick = useCallback(
-    async (e: any, tweetId: number) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      await likeTweet(tweetId);
-      setLiked(!isLiked);
-      _count.likedBy = isLiked ? _count?.likedBy - 1 : _count?.likedBy + 1;
-    },
-    [likeTweet, _count?.likedBy, isLiked]
-  );
-
-  const handleRetweet = useCallback(
-    async (e: any, tweetId: number) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      await retweet(tweetId);
-
-      setRetweeted(!setRetweeted);
-      _count.retweetedBy = isRetweeted
-        ? _count?.retweetedBy - 1
-        : _count?.retweetedBy + 1;
-    },
-    [retweet, _count?.retweetedBy, isRetweeted]
-  );
-
-  const handleBookmark = async (e: any, tweetId: number) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    await bookmarkTweet(tweetId);
-  };
-
-  const handleAuthorClick: MouseEventHandler<HTMLDivElement> = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    // Navigate programmatically if needed
-    router.push(`/${author.username}`);
-  };
   const imageGridStyles: any = {
     1: "grid-rows-1",
     2: "grid grid-cols-2 grid-rows-1 gap-[2px]",
@@ -244,53 +199,11 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
           </div>
 
           <div className="flex min-w-0 flex-col text-white">
-            <div className="flex justify-between gap-2 text-light-secondary dark:text-dark-secondary">
-              <div className="flex gap-1 truncate xs:overflow-visible xs:whitespace-normal">
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <div
-                      onClick={handleAuthorClick}
-                      className="flex items-center gap-1 truncate font-bold custom-underline text-light-primary dark:text-dark-primary"
-                    >
-                      {author?.name}
-                      <CustomIcon
-                        iconName="CheckmarkIcon"
-                        className="fill-blue-400 h-5"
-                      />
-                    </div>
-                  </HoverCardTrigger>
-                  <UserHoverCard author={author} />
-                </HoverCard>
-
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <div
-                      className="truncate text-light-secondary dark:text-dark-secondary "
-                      onClick={handleAuthorClick}
-                    >
-                      @{author?.username}
-                    </div>
-                  </HoverCardTrigger>
-                  <UserHoverCard author={author} />
-                </HoverCard>
-
-                <div className="flex gap-1">
-                  <i>·</i>
-                  <div className="group relative text-[#8f93a0]">
-                    <div className="whitespace-nowrap text-[15px]">
-                      {formatTimeAgo(createdAt)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="px-2">
-                <CustomIcon
-                  iconName="MoreIcon"
-                  className="w-5 h-5 fill-[#8f93a0]"
-                />
-              </div>
-            </div>
-
+            <TweetHeader
+              author={author}
+              createdAt={createdAt}
+              handleAuthorClick={handlers.handleAuthorClick}
+            />
             <div className="text-light-primary dark:text-dark-primary break-words inline-block">
               {content}
             </div>
@@ -306,37 +219,35 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
                 imageDialogOpen={imageDialogOpen}
                 images={images}
               />
-              {/* {renderImages()} */}
             </div>
 
             <div className="h-8 bg flex flex-row mt-1 ">
               <div className="bg w-[85%] flex flex-row items-center">
-                {svg.map(({ ...data }) => (
-                  <button
-                    key={data.iconName}
-                    onClick={data.onClick}
-                    className="w-1/4 flex flex-row items-end"
-                  >
-                    <div className="group flex flwx-row justify-center items-center">
-                      <div
-                        className={`flex ${data.bgColor} justify-center rounded-full p-1  `}
-                      >
-                        <CustomIcon
-                          iconName={data.iconName as any}
-                          className={`h-5 w-5 fill-[#8f93a0] ${data.fillColor}`}
-                        />
-                      </div>
-                      <p
-                        className={`text-xs text-[#8f93a0]  ${data.textColor}`}
-                      >
-                        {data.totalAmount}
-                      </p>
-                    </div>
-                  </button>
-                ))}
+                {svg.map(
+                  ({
+                    iconName,
+                    fillColor,
+                    bgColor,
+                    textColor,
+                    totalAmount,
+                    onClick,
+                  }) => (
+                    <IconButton
+                      key={iconName}
+                      data={{
+                        iconName,
+                        fillColor,
+                        bgColor,
+                        textColor,
+                        totalAmount,
+                        onClick,
+                      }}
+                    />
+                  )
+                )}
               </div>
               <div className="sm:w-[15%] w-[25%] flex flex-row items-center justify-center">
-                <button onClick={(e: any) => handleBookmark(e, id)}>
+                <button onClick={(e: any) => handlers.handleBookmark(e, id)}>
                   <CustomIcon
                     iconName={
                       isBookmarked ? "SolidBookmarkIcon" : "BookmarkIcon"

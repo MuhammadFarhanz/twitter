@@ -5,6 +5,7 @@ import ImageComponent from "../ui/image-preview";
 import ImageInput from "./image-input";
 import { cn } from "@/lib/utils";
 import TweetButton from "../ui/tweet-button";
+import { useGetUser } from "@/api/useGetUser";
 
 interface TweetFormProps {
   formik: any;
@@ -19,6 +20,8 @@ export const TweetFormDialog = ({
   handleDeleteImage,
   className,
 }: TweetFormProps) => {
+  const { data: user } = useGetUser();
+
   const ref = useRef<HTMLTextAreaElement>(null);
 
   const handleTextareaInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -38,7 +41,7 @@ export const TweetFormDialog = ({
         className={cn("hover-animation grid w-full gap-3 px-2 py-3", className)}
       >
         <div className="flex flex-row ">
-          <AvatarProfile className="mr-3" />
+          <AvatarProfile className="mr-1" src={user?.profile_pic} />
 
           <div className="flex w-full flex-col mt-1 min-h-[134px] h-fit">
             <TextareaInput
@@ -47,6 +50,7 @@ export const TweetFormDialog = ({
               maxLength={500}
               value={formik.values.content}
               onChange={formik.handleChange}
+              placeholder={"What is happening?!"}
             />
 
             <div
@@ -69,7 +73,13 @@ export const TweetFormDialog = ({
 
         <div className="flex justify-between border-t border-light-border dark:border-dark-border pt-3">
           <ImageInput handleFileInputChange={handleFileInputChange} />
-          <TweetButton />
+          <TweetButton
+            disable={
+              formik.values.content || formik.values.images.length != 0
+                ? false
+                : true
+            }
+          />
         </div>
       </label>
     </form>

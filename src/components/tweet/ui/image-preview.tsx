@@ -1,7 +1,13 @@
 import { CustomIcon } from "@/components/ui/custom-icon";
 import React from "react";
 
-function ImageComponent({ image, index, onDeleteImage, imageLength }: any) {
+function ImageComponent({
+  image,
+  index,
+  onDeleteImage,
+  imageLength,
+  className,
+}: any) {
   return (
     <div key={index} className="w-full relative">
       <div

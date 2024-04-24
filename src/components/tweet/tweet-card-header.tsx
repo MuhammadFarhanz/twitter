@@ -8,6 +8,7 @@ type TweetHeaderProps = {
   author: {
     name: string;
     username: string;
+    is_verified: boolean;
   };
   createdAt: string;
   handleAuthorClick: any;
@@ -28,10 +29,12 @@ const TweetHeader: React.FC<TweetHeaderProps> = ({
               className="flex items-center gap-1 truncate font-bold custom-underline text-light-primary dark:text-dark-primary"
             >
               {author?.name}
-              <CustomIcon
-                iconName="CheckmarkIcon"
-                className="fill-blue-400 h-5"
-              />
+              {author?.is_verified && (
+                <CustomIcon
+                  iconName="CheckmarkIcon"
+                  className="fill-blue-400 h-5"
+                />
+              )}
             </div>
           </HoverCardTrigger>
           <UserHoverCard author={author} />
