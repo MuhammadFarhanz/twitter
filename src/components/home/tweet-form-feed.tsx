@@ -5,16 +5,10 @@ import ImageComponent from "../tweet/ui/image-preview";
 import ImageInput from "../tweet/input/image-input";
 import TweetButton from "../tweet/ui/tweet-button";
 import { useGetUser } from "@/api/useGetUser";
+import useTweetFormLogic from "../tweet/service/useTweetForm";
 
-interface TweetFormProps {
-  formik: any;
-  handleFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-export const TweetFormFeed = ({
-  formik,
-  handleFileInputChange,
-}: TweetFormProps) => {
+export const TweetFormFeed = () => {
+  const { formik, handleFileInputChange } = useTweetFormLogic({});
   const { data: user } = useGetUser();
   const ref = useRef<HTMLTextAreaElement>(null);
 
@@ -45,7 +39,7 @@ export const TweetFormFeed = ({
       <label className="hover-animation grid w-full gap-3 px-4 py-3 grid-cols-[auto,1fr] border-b border-light-border dark:border-dark-border">
         <AvatarProfile src={user?.profile_pic} />
 
-        <div className="flex w-full flex-col mt-1 ">
+        <div className="flex w-full flex-col ">
           <TextareaInput
             ref={ref}
             onInput={handleTextareaInput}
@@ -72,7 +66,7 @@ export const TweetFormFeed = ({
           </div>
 
           <div className="flex justify-between">
-            <div className="flex items-center justify-center text-main-accent ">
+            <div className="flex items-center justify-center text-main-accent pl-[2px]">
               <ImageInput handleFileInputChange={handleFileInputChange} />
             </div>
             <TweetButton
