@@ -7,7 +7,6 @@ import {
   AccordionTrigger,
 } from "../ui/accordion";
 import { CustomIcon } from "../ui/custom-icon";
-import { SidebarLink } from "./sidebar-link";
 import {
   Dialog,
   DialogClose,
@@ -20,9 +19,8 @@ import {
 import { Button } from "../ui/button";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
-
 import { cn } from "@/lib/utils";
-import useThemeStore from "@/lib/theme-store";
+import useThemeStore from "@/lib/store/theme-store";
 
 const LinkItem = ({ iconName, text }: any) => (
   <a className="p-0 hover:bg-light-primary/10 font-medium dark:hover:bg-dark-primary/10  cursor-pointer ">
@@ -72,12 +70,8 @@ const CustomRadioGroupItem: React.FC<CustomRadioGroupItemProps> = ({
 );
 
 function MoreSettings() {
-  const { theme, accent, changeAccent, changeTheme } = useThemeStore();
-  // // const kontol = getTheme();
+  const { changeAccent, changeTheme } = useThemeStore();
 
-  // console.log(theme, accent, changeAccent, changeTheme, "boom");
-  // // console.log("bg", kontol.background, "asuuul");
-  // // const colors = ["blue", "yellow", "pink", "purple", "orange", "green"];
   const colors = [
     "bg-accent-blue",
     "bg-accent-yellow",
@@ -87,7 +81,6 @@ function MoreSettings() {
     "bg-accent-green",
   ];
 
-  // console.log(theme, accent, "ini real cuy");
   return (
     <Popover>
       <PopoverContent
@@ -158,7 +151,6 @@ function MoreSettings() {
                           These Settings affect all the X accounts on this
                           browser.
                         </p>
-                        {/* <div className="border w-60 h-40"></div> */}
                       </DialogHeader>
                       <label className="text-dark-secondary text-sm font-semibold">
                         Color
@@ -166,15 +158,7 @@ function MoreSettings() {
                       <div className="bg-dark-primary/10 h-16 flex flex-row items-center rounded-lg">
                         <RadioGroup className="flex flex-row w-full gap-3 ">
                           {colors.map((color, index) => (
-                            // <div className={`${color}`}>kontol{color}</div>
-
                             <div className={`flex justify-center w-1/6 `}>
-                              {/* {`bg-accent-${color}, ${index}`} */}
-                              {/* <button
-                                onClick={() => {
-                                  changeAccent(color);
-                                }}
-                              > */}
                               <RadioGroupItem
                                 onClick={() =>
                                   changeAccent(color.replace("bg-accent-", ""))
@@ -184,7 +168,6 @@ function MoreSettings() {
                                 color="red"
                                 id={`r${index}`}
                               />
-                              {/* </button> */}
                             </div>
                           ))}
                         </RadioGroup>
@@ -226,9 +209,6 @@ function MoreSettings() {
                           </Button>
                         </DialogClose>
                       </div>
-                      {/* <DialogFooter className="bg-blue-300">
-                        <form>fjdsao</form>
-                      </DialogFooter> */}
                     </DialogContent>
                   </Dialog>
                   <LinkItem
@@ -239,20 +219,10 @@ function MoreSettings() {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
-          {/* <div className="flex flex-row justify-between items-center">
-          <p className="font-semibold">Creator Studio</p>
-          <CustomIcon
-            iconName="ArrowDownIcon"
-            className="w-5 h-5 fill-white "
-          />
-        </div> */}
         </div>
       </PopoverContent>
       <PopoverTrigger>
-        <div
-          className={cn("group py-1 outline-none hidden xs:flex ")}
-          // onClick={disabled ? preventBubbling() : undefined}
-        >
+        <div className={cn("group py-1 outline-none hidden xs:flex ")}>
           <div
             className={cn(
               `custom-button flex items-center justify-center gap-4 self-start p-2 text-xl transition 
@@ -269,13 +239,6 @@ function MoreSettings() {
             <p className="hidden xl:block">More</p>
           </div>
         </div>
-
-        {/* <SidebarLink
-          href=""
-          linkName="More"
-          iconName="CircleMoreIcon"
-          canBeHidden={true}
-        /> */}
       </PopoverTrigger>
     </Popover>
   );
