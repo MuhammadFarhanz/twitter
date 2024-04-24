@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
@@ -17,10 +16,7 @@ import { useState } from "react";
 import { useCreateUser } from "@/api/useCreateUser";
 import { useLoginUser } from "@/api/useLoginUser";
 import { useRouter } from "next/router";
-import Background from "../../../public/twitter-banner.png";
-import { Dialog } from "../ui/dialog";
-import { DialogContent } from "@radix-ui/react-dialog";
-import MultistepForm from "./multistep-form";
+import Background from "../../../public/assets/twitter-banner.png";
 import { useDialogStore } from "@/lib/store/dialog";
 
 interface AuthCommonProps {
@@ -87,13 +83,13 @@ export default function AuthCommon({
   return (
     <>
       <div
-        className="w-full h-full bg-cover relative hidden  flex-col bg-muted p-10 text-white lg:flex"
+        className="w-full h-full bg-cover relative hidden flex-col bg-muted p-10 text-white lg:flex"
         style={{
-          backgroundImage: `url(${Background.src})`,
+          backgroundImage: `url(${Background?.src})`,
         }}
       ></div>
 
-      <div className="lg:p-8 bg-white h-full items-center flex">
+      <div className="lg:p-8 bg-white h-full w-full items-center flex">
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 lg:max-w-lg">
           <Card>
             <CardHeader className="space-y-1">

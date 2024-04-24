@@ -1,23 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import { Dialog, DialogContent } from "../ui/dialog";
 import { CustomIcon } from "../ui/custom-icon";
-import Background from "../../../public/default_profile_400x400.png";
+import Background from "../../../public/assets/default_profile_400x400.png";
 import { useFormik } from "formik";
 import MultiStep from "react-multistep";
 import { Input } from "../ui/input";
 
 import { useDialogStore } from "@/lib/store/dialog";
 import { useUpdateUser } from "@/api/useUpdateUser";
+import { useGetUser } from "@/api/useGetUser";
 
 function StepOne({ formik, handleFileChange, setStep }: any) {
   return (
     <>
-      <div className="flex items-center justify-center h-14">
+      <div className="flex items-center justify-center h-4 sm:h-14">
         <CustomIcon iconName="TwitterIcon" />
       </div>
 
-      <div className="h-20 mt-4">
-        <p className="text-3xl font-bold text-main-primary">
+      <div className="sm:h-20 h-10 mt-4">
+        <p className="sm:text-3xl  text-2xl font-bold text-main-primary">
           Pick a profile picture
         </p>
         <p className="text-xs text-dark-secondary">
@@ -77,12 +78,12 @@ function StepTwo({ formik }: any) {
       className=" border-black h-full overflow-hidden flex flex-col justify-between"
     >
       <div>
-        <div className="flex items-center justify-center h-14">
+        <div className="flex items-center justify-center h-4 sm:h-14">
           <CustomIcon iconName="TwitterIcon" />
         </div>
 
         <div className="h-20 mt-4">
-          <p className="text-3xl font-bold text-main-primary">
+          <p className="sm:text-3xl text-2xl font-bold text-main-primary">
             What should we call you?
           </p>
           <p className="text-sm text-dark-secondary mt-2">
@@ -90,7 +91,7 @@ function StepTwo({ formik }: any) {
           </p>
         </div>
 
-        <div className=" flex mt-4">
+        <div className=" flex mt-2 sm:mt-4">
           <div className="relative w-full ">
             <label className="w-full rounded-md p-2  flex flex-col border-blue-400 border-2 outline-none ">
               <span className="text-blue-400 text-xs">Username</span>
@@ -114,9 +115,7 @@ function StepTwo({ formik }: any) {
           type="submit"
           className="w-full hover:bg-dark-secondary/10 rounded-full h-12 border border-dark-border/10 outline-none"
         >
-          <p className="font-bold">
-            {formik.values.image ? "Next" : "Skip for now"}
-          </p>
+          <p className="font-bold">Next</p>
         </button>
       </div>
     </form>
@@ -124,17 +123,19 @@ function StepTwo({ formik }: any) {
 }
 
 function MultistepForm({ isOpen }: any) {
+  const [step, setStep] = useState(1);
+  const { refetch } = useGetUser();
   const { closeDialog } = useDialogStore();
-  const { mutateAsync } = useUpdateUser({
+  const { mutateAsync, isSuccess } = useUpdateUser({
     onSuccess: () => {
       closeDialog();
+      refetch();
     },
   });
 
-  const [step, setStep] = useState(1);
   const formik = useFormik({
     initialValues: {
-      profile_pic: null as string | null,
+      profile_pic: "",
       name: null,
     },
     onSubmit: (values) => {
@@ -145,6 +146,7 @@ function MultistepForm({ isOpen }: any) {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.currentTarget.files) {
       const file = event.currentTarget.files[0];
+
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
@@ -157,10 +159,42 @@ function MultistepForm({ isOpen }: any) {
     }
   };
 
+  const fetchAndConvertToBase64 = async (url: string): Promise<string> => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64String = reader.result as string;
+          resolve(base64String);
+        };
+        reader.onerror = () => {
+          reject(new Error("Error reading image data"));
+        };
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      throw new Error("Error fetching image data: ");
+    }
+  };
+
+  useEffect(() => {
+    // Fetch and convert default profile picture to Base64
+    fetchAndConvertToBase64(Background.src)
+      .then((base64String) => {
+        // Set the profile_pic field with the Base64 string
+        formik.setFieldValue("profile_pic", base64String);
+      })
+      .catch((error) => {
+        console.error("Error converting image to Base64:", error);
+      });
+  }, []);
+
   return (
     <div className="fixed">
       <Dialog open={isOpen}>
-        <DialogContent className="bg-light max-w-[550px]  text-black h-[65%] border-0 top-[15%] flex flex-col px-16 border-none outline-none">
+        <DialogContent className="bg-light w-[90%] rounded-md max-w-[550px]  text-black h-[65%] border-0 top-[15%] flex flex-col sm:px-16 border-none outline-none">
           {step === 1 && (
             <StepOne
               formik={formik}
