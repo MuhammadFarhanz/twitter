@@ -1,9 +1,9 @@
 import React, { ReactNode, useEffect } from "react";
-import useThemeStore, { Accent, Theme } from "./theme-store";
+import useThemeStore, { Accent, Theme } from "./store/theme-store";
 // Make sure to import useThemeStore
 
 const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const { theme, accent, changeTheme, changeAccent } = useThemeStore();
+  const { changeTheme, changeAccent } = useThemeStore();
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") as Theme;
@@ -11,10 +11,6 @@ const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     // Set the initial theme from localStorage, or use the default "dark" theme
     changeTheme(savedTheme || "dark");
     changeAccent(savedAccent || "blue");
-
-    // Your initialization logic here, e.g., applying initial theme
-    // or fetching the user's preferred theme from an API
-    // console.log("Theme initialized:", theme, accent);
   }, []);
 
   return <>{children}</>;

@@ -5,8 +5,7 @@ function useWindow() {
 
   useEffect(() => {
     const handleResize = () => {
-      const isMobileDevice = window.innerWidth <= 500; // Adjust the threshold as needed
-      //   const isLaptopDevice = window.innerWidth <= 1024;
+      const isMobileDevice = window.innerWidth <= 500;
 
       setIsMobile(isMobileDevice);
     };
