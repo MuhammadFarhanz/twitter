@@ -43,6 +43,7 @@ export default function AuthCommon({
   const { mutateAsync: loginUser, isPending: isLoginUserPending } =
     useLoginUser({
       onSuccess: () => {
+        router.reload();
         router.push("/home");
       },
     });
