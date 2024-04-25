@@ -13,12 +13,21 @@ const loginUserValidation = Joi.object({
   password: Joi.string().min(5).required(),
 });
 
-const getUserValidation = Joi.number().integer().required();
+const getUserValidation = Joi.alternatives()
+  .try(Joi.string().max(20), Joi.number())
+  .required();
 
 const updateUserValidation = Joi.object({
   id: Joi.number().required(),
   username: Joi.string().max(20).optional(),
   password: Joi.string().min(5).optional(),
+  profile_pic: Joi.string().optional(),
+  name: Joi.string().optional(),
+});
+
+const followValidationSchema = Joi.object({
+  userId: Joi.number().required(),
+  userIdToFollow: Joi.number().required(),
 });
 
 export {
@@ -26,4 +35,5 @@ export {
   loginUserValidation,
   getUserValidation,
   updateUserValidation,
+  followValidationSchema,
 };
