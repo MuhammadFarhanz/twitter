@@ -43,8 +43,37 @@ const getById = async (req, res, next) => {
   }
 };
 
+const getBookmark = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await userService.getBookmark(userId);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const timeline = async (req, res, next) => {
+  try {
+    const { take, lastCursor } = req?.query;
+    const result = await tweetService.timeline(take, lastCursor);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 export default {
   create,
   getAll,
   getById,
+  getBookmark,
+  timeline,
 };

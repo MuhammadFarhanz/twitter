@@ -38,6 +38,20 @@ const get = async (req, res, next) => {
   }
 };
 
+const getByUsername = async (req, res, next) => {
+  try {
+    const { username } = req.params;
+
+    const result = await userService.getByUsername(username);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
 const update = async (req, res, next) => {
   try {
     const id = req.user.id;
@@ -55,9 +69,73 @@ const update = async (req, res, next) => {
   }
 };
 
-const logout = async (req, res) => {
+const logout = async (req, res, next) => {
   try {
-    const result = await userService.logout(req.user.id);
+    const result = await userService.logout(req.user.id, res);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const follow = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+    const userIdToFollow = req.params.id;
+
+    const request = req.body;
+    request.userId = id;
+    request.userIdToFollow = userIdToFollow;
+
+    console.log(request);
+
+    const result = await userService.follow(request);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const bookmark = async (req, res, next) => {
+  try {
+    const request = req.body;
+    request.userId = req.user.id;
+
+    const result = await userService.bookmarks(request);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getBookmark = async (req, res, next) => {
+  try {
+    const userId = req?.user.id;
+
+    const result = await userService.getBookmark(userId);
+
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+const getFollowSuggestion = async (req, res, next) => {
+  try {
+    const id = req.user.id;
+
+    const result = await userService.getFollowSuggestion(id);
 
     res.status(200).json({
       data: result,
@@ -71,6 +149,11 @@ export default {
   register,
   login,
   get,
+  getByUsername,
   update,
   logout,
+  follow,
+  bookmark,
+  getBookmark,
+  getFollowSuggestion,
 };
