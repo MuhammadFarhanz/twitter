@@ -47,6 +47,14 @@ export const authMiddleware = async (req, res, next) => {
         where: {
           token: token,
         },
+        select: {
+          id: true,
+          username: true,
+          email: true,
+          password: true,
+          is_verified: true,
+          token: true,
+        },
       });
 
       if (!user) {
@@ -58,6 +66,7 @@ export const authMiddleware = async (req, res, next) => {
       // Attach the user to the request object
       req.user = user;
 
+      // Call next middleware or route handler
       next();
     } catch (error) {
       return res.status(401).json({
