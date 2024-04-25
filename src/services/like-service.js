@@ -5,13 +5,23 @@ import { validate } from "../validation/validation.js";
 
 const create = async (request) => {
   const data = validate(likeValidation, request);
-
-  const existingLike = await prisma.like.findUnique({
+  const user = await prisma.user.findUnique({
     where: {
-      tweetId_userId: {
-        tweetId: data.tweetId,
-        userId: data.userId,
-      },
+      id: data.userId,
+    },
+    include: {
+      likedTweets: true,
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "User not found");
+  }
+
+  const existingLike = await prisma.like.findFirst({
+    where: {
+      userId: data.userId,
+      tweetId: data.tweetId,
     },
   });
 
@@ -21,6 +31,10 @@ const create = async (request) => {
         id: existingLike.id,
       },
     });
+
+    console.log(
+      `Tweet with ID ${data.tweetId} unliked by user with ID ${data.userId}`
+    );
   } else {
     await prisma.like.create({
       data: {
@@ -28,6 +42,10 @@ const create = async (request) => {
         tweetId: data.tweetId,
       },
     });
+
+    console.log(
+      `Tweet with ID ${data.tweetId} liked by user with ID ${data.userId}`
+    );
   }
 };
 

@@ -4,14 +4,26 @@ import { likeValidation } from "../validation/like-validation.js";
 import { validate } from "../validation/validation.js";
 
 const create = async (request) => {
-  const data = validate(likeValidation, request);
+  const { userId, tweetId } = validate(likeValidation, request);
 
-  const existingRetweet = await prisma.retweet.findUnique({
+  console.log(userId, tweetId);
+  const user = await prisma.user.findUnique({
     where: {
-      tweetId_userId: {
-        tweetId: data.tweetId,
-        userId: data.userId,
-      },
+      id: userId,
+    },
+    include: {
+      retweets: true, // Include retweets in the user's data
+    },
+  });
+
+  if (!user) {
+    throw new ResponseError(404, "User not found");
+  }
+
+  const existingRetweet = await prisma.retweet.findFirst({
+    where: {
+      userId: userId,
+      tweetId: tweetId,
     },
   });
 
@@ -21,13 +33,16 @@ const create = async (request) => {
         id: existingRetweet.id,
       },
     });
+    console.log(` unretweet by user with ID `);
   } else {
     await prisma.retweet.create({
       data: {
-        userId: data.userId,
-        tweetId: data.tweetId,
+        userId: userId,
+        tweetId: tweetId,
       },
     });
+
+    console.log(` retweet by user with ID `);
   }
 };
 
