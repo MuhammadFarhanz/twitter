@@ -8,36 +8,46 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String
-  name      String?
-  bio       String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  token     String?
-  tweets    Tweet[]  @relation("UserTweets")
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  email       String   @unique
+  password    String
+  name        String?
+  bio         String?
+  profile_pic String?
+  is_verified Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  token       String?
 
-  likes   Like[]
-  Retweet Retweet[]
+  tweets      Tweet[]    @relation("UserTweets")
+  replies     Tweet[]    @relation("UserReplies")
+  likedTweets Like[]     @relation("LikedTweets")
+  retweets    Retweet[]  @relation("Retweets")
+  bookmark    Bookmark[] @relation("Bookmarks")
+  followedBy  User[]     @relation("UserFollows")
+  following   User[]     @relation("UserFollows")
 }
 
 model Tweet {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   content   String?
   authorId  Int
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  images    Image[]   @relation("TweetImage")
-  likes     Like[]
-  retweets  Retweet[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  images    Image[]  @relation("TweetImage")
 
   replyToId   Int?    @map("reply_to_id")
   parent      Tweet?  @relation("ParentTweet", fields: [replyToId], references: [id])
   replies     Tweet[] @relation("ParentTweet")
   replyImages Image[] @relation("ReplyImage")
-  author      User    @relation("UserTweets", fields: [authorId], references: [id])
+
+  author    User  @relation("UserTweets", fields: [authorId], references: [id], map: "TweetAuthor")
+  repliedBy User? @relation("UserReplies", fields: [authorId], references: [id], map: "RepliesAuthor")
+
+  likedBy      Like[]     @relation("LikedBy")
+  retweetedBy  Retweet[]  @relation("RetweetedBy")
+  bookmarkedBy Bookmark[] @relation("Bookmarks")
 }
 
 model Image {
@@ -53,25 +63,32 @@ model Image {
 
 model Like {
   id        Int      @id @default(autoincrement())
-  tweetId   Int
   userId    Int
+  tweetId   Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  tweet     Tweet    @relation(fields: [tweetId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
 
-  @@unique([tweetId, userId])
+  user  User  @relation("LikedTweets", fields: [userId], references: [id])
+  tweet Tweet @relation("LikedBy", fields: [tweetId], references: [id])
 }
 
 model Retweet {
   id        Int      @id @default(autoincrement())
-  tweetId   Int
   userId    Int
+  tweetId   Int
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
-  tweet Tweet @relation(fields: [tweetId], references: [id])
-  user  User  @relation(fields: [userId], references: [id])
+  user  User  @relation("Retweets", fields: [userId], references: [id])
+  tweet Tweet @relation("RetweetedBy", fields: [tweetId], references: [id])
+}
 
-  @@unique([tweetId, userId])
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tweetId   Int
+  createdAt DateTime @default(now())
+
+  user  User  @relation("Bookmarks", fields: [userId], references: [id])
+  tweet Tweet @relation("Bookmarks", fields: [tweetId], references: [id])
+
+  @@unique([userId, tweetId])
 }
