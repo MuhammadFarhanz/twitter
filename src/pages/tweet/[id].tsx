@@ -39,7 +39,7 @@ function Post() {
     createdAt,
     parent,
     replies,
-  } = tweetData;
+  } = tweetData ?? {};
   const { data: user, error: userError } = useGetUser();
 
   const [isLiked, setLiked] = useState(false);
