@@ -1,4 +1,3 @@
-import { raw } from "@prisma/client/runtime/library.js";
 import { prisma } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
 import { likeValidation } from "../validation/like-validation.js";
@@ -83,13 +82,12 @@ const login = async (request, res) => {
     });
 
     res.cookie("token", token, {
-      httpOnly: false,
-      secure: true,
-      sameSite: "None",
+      // httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       path: "/",
-      // domain:
-      //   process.env.NODE_ENV === "production" ? ".vercel.app" : "localhost",
+      //domain: ".vercel.app",
     });
 
     const updatedUser = await prisma.user.update({
