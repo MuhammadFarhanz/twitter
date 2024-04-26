@@ -88,7 +88,6 @@ const login = async (request, res) => {
       sameSite: "None",
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       path: "/",
-      proxy: true,
       // domain:
       //   process.env.NODE_ENV === "production" ? ".vercel.app" : "localhost",
     });
