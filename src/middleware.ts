@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function middleware(req: NextRequest, res: NextResponse) {
   const token = req.cookies.get("token")?.value;
 
-  console.log("here", req);
+  console.log("here", req.cookies.get("token"));
   if (!token) {
     return NextResponse.redirect(new URL("/auth/sign-in", req.url));
   }
