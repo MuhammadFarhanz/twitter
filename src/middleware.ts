@@ -8,7 +8,10 @@ export async function middleware(req: NextRequest, res: NextResponse) {
     return NextResponse.redirect(new URL("/auth/sign-in", req.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+
+  response.headers.set(`x-middleware-cache`, `no-cache`);
+  return response;
 }
 
 export const config = {
