@@ -6,11 +6,11 @@ import TextareaInput from "./input/textarea-input";
 import ImageComponent from "./ui/image-preview";
 import ImageInput from "./input/image-input";
 import TweetButton from "./ui/tweet-button";
-import { useGetTweetById } from "@/api/useGetTweetById";
+import { useGetTweetById } from "@/lib/hooks/useGetTweetById";
 import { ScrollArea } from "../ui/scroll-area";
 import useTweetFormLogic from "./utils/useTweetForm";
 import { formatTimeAgo } from "./utils/formatTime";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 
 export default function ReplyDialog({ isOpen, setIsOpen, id }: any) {
   const { formik, handleFileInputChange } = useTweetFormLogic({

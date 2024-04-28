@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from "react";
-import { useGetUser } from "../../api/useGetUser";
+import { useGetUser } from "../../lib/hooks/useGetUser";
 import { useRouter } from "next/router";
 import NavLink from "./nav-links";
-import { useFollowUser } from "@/api/useFollowUser";
+import { useFollowUser } from "@/lib/hooks/useFollowUser";
 import NotFound from "./not-found";
 import TweetCard from "../tweet/tweet-card";
 import Spinner from "../ui/spinner";

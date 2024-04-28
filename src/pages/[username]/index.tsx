@@ -1,8 +1,8 @@
 import Layout from "@/components/layout/main-layout";
 import Profile from "../../components/user/profile";
 import { useRouter } from "next/router";
-import { useGetUserByUsername } from "@/api/useGetUserByUsername";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUserByUsername } from "@/lib/hooks/useGetUserByUsername";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 import useUserStore from "@/lib/store/user-store";
 import Image from "next/image";
 

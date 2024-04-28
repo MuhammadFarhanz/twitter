@@ -1,4 +1,4 @@
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 import { AvatarProfile } from "../tweet/ui/avatar";
 import { CustomIcon } from "../ui/custom-icon";
 import { Input } from "../ui/input";
@@ -6,7 +6,7 @@ import { ScrollArea } from "../ui/scroll-area";
 import Trending from "./trends";
 import FollowButton from "../user/follow-button";
 import UserCard from "./user-card";
-import { useGetRandomUser } from "@/api/useGetRandomUser";
+import { useGetRandomUser } from "@/lib/hooks/useGetRandomUser";
 import Link from "next/link";
 
 export function Aside(): JSX.Element {

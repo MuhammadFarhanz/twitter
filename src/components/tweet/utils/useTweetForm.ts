@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useCreateTweet } from "@/api/useCreateTweet";
+import { useCreateTweet } from "@/lib/hooks/useCreateTweet";
 import { handleFileChange } from "./handleChangeFile";
 
 interface TweetFormValues {

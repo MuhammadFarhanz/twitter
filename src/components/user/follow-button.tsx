@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { CustomIcon } from "../ui/custom-icon";
 import useThemeStore from "@/lib/store/theme-store";
-import { useFollowUser } from "@/api/useFollowUser";
+import { useFollowUser } from "@/lib/hooks/useFollowUser";
 import clsx from "clsx";
 
 function FollowButton({

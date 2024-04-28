@@ -1,11 +1,11 @@
 import React from "react";
 import { CustomIcon } from "../ui/custom-icon";
 import { AvatarProfile } from "../tweet/ui/avatar";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useLogoutUser } from "@/api/useLogoutUser";
+import { useLogoutUser } from "@/lib/hooks/useLogoutUser";
 
 function FeedHeaderMobile() {
   const { data: user } = useGetUser();

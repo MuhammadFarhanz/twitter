@@ -7,8 +7,8 @@ import MultiStep from "react-multistep";
 import { Input } from "../ui/input";
 
 import { useDialogStore } from "@/lib/store/dialog";
-import { useUpdateUser } from "@/api/useUpdateUser";
-import { useGetUser } from "@/api/useGetUser";
+import { useUpdateUser } from "@/lib/hooks/useUpdateUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 
 function StepOne({ formik, handleFileChange, setStep }: any) {
   return (

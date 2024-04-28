@@ -1,7 +1,7 @@
 import Layout from "@/components/layout/main-layout";
 import Profile from "../../../components/user/profile";
 import { useRouter } from "next/router";
-import { useGetUserByUsername } from "@/api/useGetUserByUsername";
+import { useGetUserByUsername } from "@/lib/hooks/useGetUserByUsername";
 import useUserStore from "@/lib/store/user-store";
 
 export default function Highlights() {

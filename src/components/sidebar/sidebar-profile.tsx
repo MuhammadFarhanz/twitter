@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { CustomIcon } from "../ui/custom-icon";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 import { AvatarProfile } from "../tweet/ui/avatar";
-import { useLogoutUser } from "@/api/useLogoutUser";
+import { useLogoutUser } from "@/lib/hooks/useLogoutUser";
 
 function SidebarProfile() {
   const { data: user } = useGetUser();

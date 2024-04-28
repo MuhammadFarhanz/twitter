@@ -1,4 +1,4 @@
-import { useGetTimeline } from "@/api/useGetTimeline";
+import { useGetTimeline } from "@/lib/hooks/useGetTimeline";
 import React, { useEffect } from "react";
 import TweetCard from "../tweet/tweet-card";
 import Spinner from "../ui/spinner";

@@ -1,6 +1,6 @@
-import { useBookmarkTweet } from "@/api/useBookmarkTweet";
-import { useLikeTweet } from "@/api/useLikeTweet";
-import { useRetweet } from "@/api/useRetweet";
+import { useBookmarkTweet } from "@/lib/hooks/useBookmarkTweet";
+import { useLikeTweet } from "@/lib/hooks/useLikeTweet";
+import { useRetweet } from "@/lib/hooks/useRetweet";
 import { MouseEventHandler } from "react";
 
 const useTweetCardHandlers = ({

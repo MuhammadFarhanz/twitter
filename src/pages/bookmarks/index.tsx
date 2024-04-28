@@ -1,5 +1,5 @@
-import { useGetBookmark } from "@/api/useGetBookmark";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetBookmark } from "@/lib/hooks/useGetBookmark";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 import Layout from "@/components/layout/main-layout";
 import TweetCard from "@/components/tweet/tweet-card";
 import { CustomIcon } from "@/components/ui/custom-icon";

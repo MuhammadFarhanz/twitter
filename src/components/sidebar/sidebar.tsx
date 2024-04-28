@@ -4,7 +4,7 @@ import useWindow from "@/lib/hooks/window-context";
 import SidebarProfile from "./sidebar-profile";
 import MoreSettings from "./more-settings";
 import Tweetdialog from "../tweet/tweet-dialog";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 
 export type NavLink = {
   href?: string;

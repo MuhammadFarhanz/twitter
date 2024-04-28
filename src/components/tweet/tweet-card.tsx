@@ -7,9 +7,9 @@ import React, {
 } from "react";
 import { CustomIcon } from "../ui/custom-icon";
 import Link from "next/link";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 import ReplyDialog from "./reply-dialog";
-import { useGetTweetById } from "@/api/useGetTweetById";
+import { useGetTweetById } from "@/lib/hooks/useGetTweetById";
 import { useRouter } from "next/router";
 import { AvatarProfile } from "./ui/avatar";
 import {

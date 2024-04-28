@@ -1,6 +1,6 @@
-import { useGetTweetById } from "@/api/useGetTweetById";
-import { useGetUser } from "@/api/useGetUser";
-import { useRetweet } from "@/api/useRetweet";
+import { useGetTweetById } from "@/lib/hooks/useGetTweetById";
+import { useGetUser } from "@/lib/hooks/useGetUser";
+import { useRetweet } from "@/lib/hooks/useRetweet";
 import Layout from "@/components/layout/main-layout";
 import IconButton from "@/components/tweet/icon-button";
 import ImageDialog from "@/components/tweet/images-dialog";

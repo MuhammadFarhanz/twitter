@@ -4,7 +4,7 @@ import TextareaInput from "../tweet/input/textarea-input";
 import ImageComponent from "../tweet/ui/image-preview";
 import ImageInput from "../tweet/input/image-input";
 import TweetButton from "../tweet/ui/tweet-button";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 import useTweetFormLogic from "../tweet/utils/useTweetForm";
 
 export const TweetFormFeed = () => {

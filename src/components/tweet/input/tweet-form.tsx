@@ -5,7 +5,7 @@ import ImageComponent from "../ui/image-preview";
 import ImageInput from "./image-input";
 import { cn } from "@/lib/utils";
 import TweetButton from "../ui/tweet-button";
-import { useGetUser } from "@/api/useGetUser";
+import { useGetUser } from "@/lib/hooks/useGetUser";
 
 interface TweetFormProps {
   formik: any;

@@ -2,7 +2,7 @@ import Layout from "@/components/layout/main-layout";
 import Profile from "../../../components/user/profile";
 import { useRouter } from "next/router";
 import TweetCard from "@/components/tweet/tweet-card";
-import { useGetUserByUsername } from "@/api/useGetUserByUsername";
+import { useGetUserByUsername } from "@/lib/hooks/useGetUserByUsername";
 import Image from "next/image";
 import useUserStore from "@/lib/store/user-store";
 
