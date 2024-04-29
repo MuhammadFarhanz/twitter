@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest, res: NextResponse) {
+  console.log(req.cookies.has("token"));
   if (req.cookies.has("token")) {
     return NextResponse.next();
   }
 
-  const redirectResponse = NextResponse.redirect("/auth/sign-in");
+  const redirectResponse = NextResponse.redirect(
+    new URL("/auth/sign-in", req.url)
+  );
   redirectResponse.headers.set("x-middleware-cache", "no-cache"); // ! FIX: Disable caching
   return redirectResponse;
   // const token = req.cookies.get("token");
