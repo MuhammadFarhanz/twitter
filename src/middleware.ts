@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest, res: NextResponse) {
-  const token = req.cookies.get("token");
-
-  console.log("here", token, req.cookies.has("token"));
-  if (!token) {
-    return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+  if (req.cookies.has("token")) {
+    return NextResponse.next();
   }
 
-  const response = NextResponse.next();
+  const redirectResponse = NextResponse.redirect("/auth/sign-in");
+  redirectResponse.headers.set("x-middleware-cache", "no-cache"); // ! FIX: Disable caching
+  return redirectResponse;
+  // const token = req.cookies.get("token");
 
-  response.headers.set(`x-middleware-cache`, `no-cache`);
-  return response;
+  // console.log("here", token);
+  // if (!token) {
+  //   return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+  // }
+
+  // const response = NextResponse.next();
+
+  // response.headers.set(`x-middleware-cache`, `no-cache`);
+  // return response;
 }
 
 export const config = {
