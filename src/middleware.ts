@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest, res: NextResponse) {
+  console.log(req.cookies, "ini cookies");
   console.log(req.cookies.has("token"));
   if (req.cookies.has("token")) {
     return NextResponse.next();
@@ -25,7 +26,7 @@ export async function middleware(req: NextRequest, res: NextResponse) {
 }
 
 export const config = {
-  matcher: ["/", "/home", "/user"],
+  matcher: ["/home"],
 };
 
 // import { NextRequest, NextResponse } from "next/server";
