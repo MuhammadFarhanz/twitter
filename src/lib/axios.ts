@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://twitterr.my.id",
+  baseURL: "https://twitterr.my.id",
   withCredentials: true,
 });
 
