@@ -207,9 +207,12 @@ const getByUsername = async (username) => {
         },
       },
       likedTweets: {
-        select: {
+        include: {
           tweet: {
-            select: tweetIncludeFields,
+            select: {
+              id: true,
+              ...tweetIncludeFields,
+            },
           },
         },
       },

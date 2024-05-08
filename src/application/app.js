@@ -8,10 +8,7 @@ import cookieParser from "cookie-parser";
 export const app = express();
 
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "https://twitter-clone-fe-henna.vercel.app",
-  ],
+  origin: ["http://localhost:3000", "https://twitterr.my.id"],
   credentials: true,
 };
 
