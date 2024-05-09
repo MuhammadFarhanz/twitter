@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest, res: NextResponse) {
-  console.log(req.cookies.get("token"), "ini cookies");
+export function middleware(req: NextRequest, res: NextResponse) {
+  let cookie = req.cookies.get("token");
+  console.log(cookie);
   console.log(req.cookies.has("token"));
   if (req.cookies.has("token")) {
     return NextResponse.next();
