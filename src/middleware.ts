@@ -1,29 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export function middleware(req: NextRequest, res: NextResponse) {
-  let cookie = req.cookies.get("token");
-  console.log(cookie);
-  console.log(req.cookies.has("token"));
-  if (req.cookies.has("token")) {
-    return NextResponse.next();
-  }
-
-  const redirectResponse = NextResponse.redirect(
-    new URL("/auth/sign-in", req.url)
-  );
-  redirectResponse.headers.set("x-middleware-cache", "no-cache"); // ! FIX: Disable caching
-  return redirectResponse;
-  // const token = req.cookies.get("token");
-
-  // console.log("here", token);
-  // if (!token) {
-  //   return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+  // let cookie = req.cookies.get("token");
+  // console.log(cookie);
+  // console.log(req.cookies.has("token"));
+  // if (req.cookies.has("token")) {
+  //   return NextResponse.next();
   // }
 
-  // const response = NextResponse.next();
+  // const redirectResponse = NextResponse.redirect(
+  //   new URL("/auth/sign-in", req.url)
+  // );
 
-  // response.headers.set(`x-middleware-cache`, `no-cache`);
-  // return response;
+  // redirectResponse.headers.set("x-middleware-cache", "no-cache"); // ! FIX: Disable caching
+  // return redirectResponse;
+  const token = req.cookies.get("token");
+
+  console.log("here", token);
+  if (!token) {
+    return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+  }
+
+  const response = NextResponse.next();
+
+  response.headers.set(`x-middleware-cache`, `no-cache`);
+  return response;
 }
 
 export const config = {
