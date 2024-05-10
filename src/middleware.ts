@@ -1,49 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
 export function middleware(req: NextRequest, res: NextResponse) {
-  // let cookie = req.cookies.get("token");
-  // console.log(cookie);
-  // console.log(req.cookies.has("token"));
-  // if (req.cookies.has("token")) {
-  //   return NextResponse.next();
-  // }
-
-  // const redirectResponse = NextResponse.redirect(
-  //   new URL("/auth/sign-in", req.url)
-  // );
-
-  // redirectResponse.headers.set("x-middleware-cache", "no-cache"); // ! FIX: Disable caching
-  // return redirectResponse;
-  const token = req.cookies.get("token");
-
-  console.log("here", token);
-  if (!token) {
-    return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get("token");
+  if (accessToken) {
+    return NextResponse.next();
   }
 
-  const response = NextResponse.next();
+  const redirectResponse = NextResponse.redirect(
+    new URL("/auth/sign-in", req.url)
+  );
 
-  response.headers.set(`x-middleware-cache`, `no-cache`);
-  return response;
+  redirectResponse.headers.set("x-middleware-cache", "no-cache"); // ! FIX: Disable caching
+  return redirectResponse;
+  //   const token = req.cookies.get("token")?.value;
+
+  //   console.log("here", token);
+  //   if (!token) {
+  //     return NextResponse.redirect(new URL("/auth/sign-in", req.url));
+  //   }
+
+  //   const response = NextResponse.next();
+
+  //   response.headers.set(`x-middleware-cache`, `no-cache`);
+  //   return response;
+  // }
 }
 
 export const config = {
   matcher: ["/home"],
 };
-
-// import { NextRequest, NextResponse } from "next/server";
-
-// export async function middleware(req: any, res: NextResponse) {
-//   const token = req.cookies.get("token")?.value;
-
-//   console.log("here", req, token);
-//   if (!token) {
-//     return NextResponse.redirect(new URL("/auth/sign-in", req.url));
-//   }
-
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//   matcher: ["/", "/user"],
-// };
