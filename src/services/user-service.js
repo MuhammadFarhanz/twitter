@@ -82,12 +82,11 @@ const login = async (request, res) => {
     });
 
     res.cookie("token", token, {
-      // httpOnly: true,
+      httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       path: "/",
-      //domain: ".vercel.app",
     });
 
     const updatedUser = await prisma.user.update({
