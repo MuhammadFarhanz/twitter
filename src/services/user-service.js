@@ -85,6 +85,7 @@ const login = async (request, res) => {
       //   httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: ".twitterr.my.id",
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       path: "/",
     });
