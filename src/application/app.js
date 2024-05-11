@@ -8,9 +8,10 @@ import cookieParser from "cookie-parser";
 export const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://twitterr.my.id"],
+  origin: "https://twitterr.my.id",
   credentials: true,
 };
+app.set("trust proxy", 1);
 
 app.use(cors(corsOptions));
 app.use(cookieParser());
