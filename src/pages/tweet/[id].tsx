@@ -21,6 +21,7 @@ import Spinner from "@/components/ui/spinner";
 import { useRouter } from "next/router";
 import React, { useEffect, useRef, useState } from "react";
 import useTweetFormLogic from "@/components/tweet/utils/useTweetForm";
+import CustomTooltip from "@/components/tweet/ui/tooltip";
 
 function Post() {
   const router = useRouter();
@@ -56,7 +57,7 @@ function Post() {
   const { formik, handleFileInputChange } = useTweetFormLogic({
     id: tweetData?.id,
     onSuccess() {
-      setReplyDialogOpen(!isReplyDialogOpen);
+      setReplyDialogOpen(false);
     },
   });
 
@@ -255,9 +256,16 @@ function Post() {
                     </div>
 
                     <div className="px-2">
-                      <CustomIcon
-                        iconName="MoreIcon"
-                        className="w-5 h-5 fill-[#8f93a0]"
+                      <CustomTooltip
+                        trigger={
+                          <div className="p-1 rounded-full hover:bg-accent-blue/10">
+                            <CustomIcon
+                              iconName="MoreIcon"
+                              className="w-5 h-5 hover:fill-accent-blue fill-[#8f93a0]"
+                            />
+                          </div>
+                        }
+                        content="More"
                       />
                     </div>
                   </div>
@@ -290,7 +298,7 @@ function Post() {
                     className="h-12 bg flex flex-row mt-2 border-t border-b
                 border-light-border dark:border-dark-border"
                   >
-                    <div className=" w-full flex flex-row items-center">
+                    <div className="w-full flex flex-row items-center">
                       {svg.map(
                         ({
                           iconName,
@@ -315,9 +323,18 @@ function Post() {
                       )}
                     </div>
                     <div className="flex flex-row items-center justify-center">
-                      <CustomIcon
-                        iconName="ShareIcon"
-                        className="h-6 w-6 fill-light-secondary dark:fill-dark-secondary "
+                      <CustomTooltip
+                        trigger={
+                          <div
+                            className={`flex justify-center rounded-full p-2 hover:bg-accent-blue/10`}
+                          >
+                            <CustomIcon
+                              iconName="ShareIcon"
+                              className={`h-5 w-5 hover:fill-accent-blue fill-[#6A6F74]`}
+                            />
+                          </div>
+                        }
+                        content={"Share"}
                       />
                     </div>
                   </div>

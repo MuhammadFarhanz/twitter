@@ -14,7 +14,7 @@ interface UseTweetFormLogicProps {
 }
 
 function useTweetFormLogic({ id, onSuccess }: UseTweetFormLogicProps) {
-  const { mutateAsync: createTweet, isSuccess } = useCreateTweet();
+  const { mutateAsync: createTweet } = useCreateTweet();
 
   const formik = useFormik<TweetFormValues>({
     initialValues: {
@@ -27,7 +27,6 @@ function useTweetFormLogic({ id, onSuccess }: UseTweetFormLogicProps) {
         if (id !== undefined) {
           values.replyToId = id;
         }
-        console.log(values);
         await createTweet(values);
 
         resetForm();

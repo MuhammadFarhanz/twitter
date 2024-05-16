@@ -22,8 +22,19 @@ const RenderImages: React.FC<RenderImagesProps> = ({
     setImageDialogOpen(true);
   };
 
+  const imageGridStyles: any = {
+    1: "grid-rows-1",
+    2: "grid grid-cols-2 grid-rows-1 gap-[2px]",
+    3: "w-full h-80",
+    4: "grid grid-cols-2 gap-[2px]",
+  };
+
   return (
-    <>
+    <div
+      className={`items-center w-full mt-2 rounded-2xl overflow-hidden p-0 ${
+        imageGridStyles[images?.length] || ""
+      }`}
+    >
       {images.length === 3 ? (
         <Dialog open={imageDialogOpen}>
           <div className="grid grid-cols-2 gap-[2px]">
@@ -60,7 +71,7 @@ const RenderImages: React.FC<RenderImagesProps> = ({
           </Dialog>
         ))
       )}
-    </>
+    </div>
   );
 };
 

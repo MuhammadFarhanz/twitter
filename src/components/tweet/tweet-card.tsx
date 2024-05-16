@@ -1,30 +1,18 @@
-import React, {
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useState } from "react";
 import { CustomIcon } from "../ui/custom-icon";
 import Link from "next/link";
 import { useGetUser } from "@/lib/hooks/useGetUser";
 import ReplyDialog from "./reply-dialog";
-import { useGetTweetById } from "@/lib/hooks/useGetTweetById";
 import { useRouter } from "next/router";
 import { AvatarProfile } from "./ui/avatar";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
-
+import { HoverCard, HoverCardTrigger } from "../ui/hover-card";
 import UserHoverCard from "./user-hover-card";
 import RenderImages from "./render-images";
 import ImageDialog from "./images-dialog";
-
 import IconButton from "./icon-button";
 import TweetHeader from "./tweet-card-header";
 import useTweetCardHandlers from "./utils/useTweetCardHandlers";
+import CustomTooltip from "./ui/tooltip";
 
 type TweetCardProps = {
   data: {
@@ -49,6 +37,7 @@ type TweetCardProps = {
     };
   };
 };
+
 /* eslint-disable react/display-name */
 const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
   const {
@@ -109,7 +98,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
       iconName: "ReplyIcon",
       fillColor: "group-hover:fill-accent-blue",
       textColor: "group-hover:text-accent-blue",
-      bgColor: "hover:bg-accent-blue/30",
+      bgColor: "hover:bg-accent-blue/10",
       totalAmount: _count?.replies !== 0 ? _count?.replies : "",
       onClick: (e: any) => handlers.handleReplyClick(e, id),
     },
@@ -121,14 +110,14 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
       textColor: isRetweeted
         ? "text-accent-green"
         : "group-hover:text-accent-green",
-      bgColor: "hover:bg-accent-green/30",
+      bgColor: "hover:bg-accent-green/10",
       totalAmount: _count?.retweetedBy !== 0 ? _count?.retweetedBy : "",
       onClick: (e: any) => handlers.handleRetweet(e, id),
     },
     {
       iconName: isLiked ? "SolidLikeIcon" : "LikeIcon",
       fillColor: "group-hover:fill-accent-pink",
-      bgColor: "hover:bg-accent-pink/30",
+      bgColor: "hover:bg-accent-pink/10",
       textColor: isLiked
         ? "group-hover:text-accent-pink text-accent-pink"
         : "group-hover:text-accent-pink",
@@ -138,17 +127,11 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
     {
       iconName: "ViewIcon",
       fillColor: "group-hover:fill-accent-blue",
+      bgColor: "hover:bg-accent-blue/10",
       textColor: "group-hover:text-accent-blue",
       totalAmount: "",
     },
   ];
-
-  const imageGridStyles: any = {
-    1: "grid-rows-1",
-    2: "grid grid-cols-2 grid-rows-1 gap-[2px]",
-    3: "w-full h-80",
-    4: "grid grid-cols-2 gap-[2px]",
-  };
 
   return (
     <>
@@ -208,21 +191,17 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
               {content}
             </div>
 
-            <div
-              className={`items-center w-full mt-2 rounded-2xl overflow-hidden p-0 ${
-                imageGridStyles[data?.images?.length] || ""
-              }`}
-            >
+            {images.length > 0 && (
               <RenderImages
                 setSelectedImageId={setSelectedImageId}
                 setImageDialogOpen={setImageDialogOpen}
                 imageDialogOpen={imageDialogOpen}
                 images={images}
               />
-            </div>
+            )}
 
-            <div className="h-8 bg flex flex-row mt-1 ">
-              <div className="bg w-[85%] flex flex-row items-center">
+            <div className="h-8 bg flex flex-row mt-1 -px-4">
+              <div className="bg w-[85%] flex flex-row items-center px-0">
                 {svg.map(
                   ({
                     iconName,
@@ -247,20 +226,40 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
                 )}
               </div>
               <div className="sm:w-[15%] w-[25%] flex flex-row items-center justify-center">
-                <button onClick={(e: any) => handlers.handleBookmark(e, id)}>
-                  <CustomIcon
-                    iconName={
-                      isBookmarked ? "SolidBookmarkIcon" : "BookmarkIcon"
-                    }
-                    className={`h-5 w-5 mr-4 hover:fill-accent-blue ${
-                      isBookmarked ? "fill-accent-blue" : "fill-[#8f93a0]"
-                    }`}
-                  />
-                </button>
+                <CustomTooltip
+                  trigger={
+                    <button
+                      onClick={(e: any) => handlers.handleBookmark(e, id)}
+                    >
+                      <div
+                        className={`flex justify-center rounded-full p-2 hover:bg-accent-blue/10`}
+                      >
+                        <CustomIcon
+                          iconName={
+                            isBookmarked ? "SolidBookmarkIcon" : "BookmarkIcon"
+                          }
+                          className={`h-5 w-5 hover:fill-accent-blue ${
+                            isBookmarked ? "fill-accent-blue" : "fill-[#6A6F74]"
+                          }`}
+                        />
+                      </div>
+                    </button>
+                  }
+                  content={"Bookmark"}
+                />
 
-                <CustomIcon
-                  iconName="ShareIcon"
-                  className="h-5 w-5  fill-[#8f93a0]"
+                <CustomTooltip
+                  trigger={
+                    <div
+                      className={`flex justify-center -mr-4 rounded-full p-2 hover:bg-accent-blue/10`}
+                    >
+                      <CustomIcon
+                        iconName="ShareIcon"
+                        className={`h-5 w-5 hover:fill-accent-blue fill-[#6A6F74]`}
+                      />
+                    </div>
+                  }
+                  content={"Share"}
                 />
               </div>
             </div>

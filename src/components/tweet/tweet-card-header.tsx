@@ -4,6 +4,8 @@ import { HoverCard, HoverCardTrigger } from "../ui/hover-card";
 import { formatTimeAgo } from "./utils/formatTime";
 import UserHoverCard from "./user-hover-card";
 
+import CustomTooltip from "./ui/tooltip";
+
 type TweetHeaderProps = {
   author: {
     name: string;
@@ -61,9 +63,17 @@ const TweetHeader: React.FC<TweetHeaderProps> = ({
           </div>
         </div>
       </div>
-      <div className="px-2">
-        <CustomIcon iconName="MoreIcon" className="w-5 h-5 fill-[#8f93a0]" />
-      </div>
+      <CustomTooltip
+        trigger={
+          <div className="p-1 rounded-full hover:bg-accent-blue/10">
+            <CustomIcon
+              iconName="MoreIcon"
+              className="w-5 h-5 hover:fill-accent-blue fill-[#8f93a0]"
+            />
+          </div>
+        }
+        content="More"
+      />
     </div>
   );
 };
