@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/axios";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface TweetFormValues {
   content: string;
@@ -8,10 +8,14 @@ interface TweetFormValues {
 }
 
 export const useCreateTweet = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (values: TweetFormValues) => {
-   
       return await axiosInstance.post("/api/tweet", values);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries();
     },
   });
 };

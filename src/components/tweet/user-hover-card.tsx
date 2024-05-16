@@ -17,10 +17,12 @@ function UserHoverCard({ author }: any) {
       <div className="my-2">
         <p className="font-black  flex flex-row items-center text-xl truncate">
           {author?.name}
-          <CustomIcon
-            iconName="CheckmarkIcon"
-            className="fill-blue-400 h-6 ml-1 mt-1"
-          />
+          {author?.is_verified && (
+            <CustomIcon
+              iconName="CheckmarkIcon"
+              className="fill-blue-400 h-6 ml-1 mt-1"
+            />
+          )}
         </p>
         <p className="text-light-secondary dark:text-dark-secondary">
           @{author?.username}

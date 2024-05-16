@@ -11,8 +11,19 @@ import { ScrollArea } from "../ui/scroll-area";
 import useTweetFormLogic from "./utils/useTweetForm";
 import { formatTimeAgo } from "./utils/formatTime";
 import { useGetUser } from "@/lib/hooks/useGetUser";
+import { CustomIcon } from "../ui/custom-icon";
 
-export default function ReplyDialog({ isOpen, setIsOpen, id }: any) {
+interface ReplyDialogProps {
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  id: number;
+}
+
+export default function ReplyDialog({
+  isOpen,
+  setIsOpen,
+  id,
+}: ReplyDialogProps) {
   const { formik, handleFileInputChange } = useTweetFormLogic({
     id,
     onSuccess() {
@@ -60,6 +71,12 @@ export default function ReplyDialog({ isOpen, setIsOpen, id }: any) {
                 <div className="flex gap-1 truncate xs:overflow-visible xs:whitespace-normal items-start">
                   <div className="flex items-center gap-1 truncate font-bold custom-underline text-light-primary dark:text-dark-primary">
                     {data?.author?.name}
+                    {data?.author?.is_verified && (
+                      <CustomIcon
+                        iconName="CheckmarkIcon"
+                        className="fill-blue-400 h-5"
+                      />
+                    )}
                   </div>
                   <div className="truncate text-light-secondary dark:text-dark-secondary">
                     @{data?.author?.username}
@@ -111,7 +128,7 @@ export default function ReplyDialog({ isOpen, setIsOpen, id }: any) {
                     formik.values.images.length > 1 ? "grid-cols-2" : ""
                   } gap-2`}
                 >
-                  {formik.values.images.map((image: any, index: any) => (
+                  {formik.values.images.map((image: any, index: number) => (
                     <ImageComponent
                       key={index}
                       image={image}

@@ -17,7 +17,7 @@ const CustomTooltip: FC<CustomTooltipProps> = ({ trigger, content }) => {
       <Tooltip>
         <TooltipTrigger>{trigger}</TooltipTrigger>
         <TooltipContent
-          className="bg-[#495A69] min-w-9 h-[20px] text-xs flex justify-center items-center mt-1 rounded-[2px] p-1 z-30 text-white"
+          className="bg-[#495A69] font-light min-w-9 h-[20px] text-xs flex justify-center items-center mt-1 rounded-[2px] p-1 z-30 text-white"
           side="bottom"
         >
           {content}

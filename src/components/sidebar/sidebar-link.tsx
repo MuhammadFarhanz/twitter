@@ -40,7 +40,7 @@ export function SidebarLink({
           )}
         >
           <CustomIcon
-            iconName={iconName}
+            iconName={isActive ? `Solid${iconName}` : iconName}
             className="w-7 h-7 fill-light-primary dark:fill-dark-primary"
           />
           <p className="hidden xl:block">{linkName}</p>

@@ -19,6 +19,7 @@ const Icons = {
   FeatherIcon,
   SpinnerIcon,
   TriangleIcon,
+  SolidHomeIcon,
   HomeIcon,
   ExploreIcon,
   NotificationIcon,
@@ -28,6 +29,7 @@ const Icons = {
   CommunitiesIcon,
   PremiumIcon,
   ProfileIcon,
+  SolidProfileIcon,
   MoreIcon,
   SettingsIcon,
   MediaIcon,
@@ -216,10 +218,18 @@ function PinOffIcon({ className }: IconProps): JSX.Element {
   );
 }
 
-function HomeIcon({ className }: IconProps): JSX.Element {
+function SolidHomeIcon({ className }: IconProps): JSX.Element {
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24">
       <path d="M21.591 7.146L12.52 1.157a.937.937 0 00-1.04 0l-9.071 5.99A.906.906 0 002 7.904v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904a.934.934 0 00-.408-.758z"></path>
+    </svg>
+  );
+}
+
+function HomeIcon({ className }: IconProps): JSX.Element {
+  return (
+    <svg className={className} aria-hidden="true" viewBox="0 0 24 24">
+      <path d="M21.591 7.146L12.52 1.157a.937.937 0 00-1.04 0l-9.071 5.99A.906.906 0 002 7.904v13.183c0 .502.418.913.929.913h6.638c.511 0 .929-.41.929-.913v-7.075h3.008v7.075c0 .502.418.913.929.913h6.639c.51 0 .928-.41.928-.913V7.904a.934.934 0 00-.408-.758zM20 20l-4.5.01.011-7.097a.924.924 0 00-.928-.913H9.44a.923.923 0 00-.929.913L8.5 20H4V8.773l8.011-5.342L20 8.764z"></path>
     </svg>
   );
 }
@@ -284,6 +294,14 @@ function ProfileIcon({ className }: IconProps): JSX.Element {
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 24 24">
       <path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6a4 4 0 118 0 4 4 0 01-8 0z"></path>
+    </svg>
+  );
+}
+
+function SolidProfileIcon({ className }: IconProps): JSX.Element {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="M17.863 13.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44zM12 2a4 4 0 100 8 4 4 0 000-8z"></path>
     </svg>
   );
 }
