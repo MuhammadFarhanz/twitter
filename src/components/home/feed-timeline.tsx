@@ -15,7 +15,6 @@ function Timeline() {
       fetchNextPage();
     }
   }, [hasNextPage, inView, fetchNextPage]);
-
   return (
     <>
       {data?.pages?.map((page) =>
