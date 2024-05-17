@@ -129,12 +129,12 @@ const logout = async (id, res) => {
     },
   });
 
-  // res.clearCookie("token", {
-  //   httpOnly: true,
-  //   secure: true,
-  //   sameSite: "lax",
-  //   path: "/",
-  // });
+  res.clearCookie("token", {
+    secure: true,
+    sameSite: "none",
+    domain: ".twitterr.my.id",
+    path: "/",
+  });
 
   return;
 
@@ -304,6 +304,7 @@ const follow = async (request) => {
   if (!userToFollow) {
     throw new ResponseError(404, "User to follow not found");
   }
+
   const existingFollow = await prisma.user.findFirst({
     where: {
       id: data.userId,
@@ -377,10 +378,6 @@ const bookmarks = async (request) => {
         },
       },
     });
-
-    console.log(
-      `Tweet with ID ${data.tweetId} unbookmarked by user with ID ${data.userId}`
-    );
   } else {
     await prisma.bookmark.create({
       data: {
@@ -388,10 +385,6 @@ const bookmarks = async (request) => {
         tweetId: data.tweetId,
       },
     });
-
-    console.log(
-      `Tweet with ID ${data.tweetId} bookmarked by user with ID ${data.userId}`
-    );
   }
 };
 
