@@ -34,9 +34,7 @@ const ProfileDetails = ({ user }: any) => {
             @{user?.username}
           </p>
           <p className="mt-2 mb-2 whitespace-pre-wrap">
-            {highlightAtSymbol(
-              "CEO for Apex Legends and @redbullgaming Player | Email: teamimperialhal@unitedtalent.com"
-            )}
+            {highlightAtSymbol(user?.bio)}
           </p>
           <div className="flex flex-row mt-3">
             <CustomIcon
