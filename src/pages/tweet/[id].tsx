@@ -50,7 +50,6 @@ function Post() {
   const [tweetId, setTweetId] = useState(0);
   const [imageDialogOpen, setImageDialogOpen] = useState(false);
   const [selectedImageId, setSelectedImageId] = useState(null);
-  const { mutateAsync: retweet } = useRetweet();
 
   const ref = useRef<HTMLTextAreaElement>(null);
   const [isFocused, setIsFocused] = useState(false);
@@ -270,7 +269,7 @@ function Post() {
                     </div>
                   </div>
 
-                  <div className="my-1 text-light-primary dark:text-dark-primary break-words inline-block">
+                  <div className="my-1 text-light-primary dark:text-dark-primary break-words whitespace-pre-wrap inline-block">
                     {content}
                   </div>
                   <div
