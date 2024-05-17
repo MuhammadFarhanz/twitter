@@ -3,6 +3,20 @@ import { CustomIcon } from "@/components/ui/custom-icon";
 import { format } from "date-fns";
 
 const ProfileDetails = ({ user }: any) => {
+  function highlightAtSymbol(text: any) {
+    const parts = text.split(/(@\w+)/g); // Split the text by "@" and following word characters
+    return parts.map((part: any, index: any) => {
+      if (part.startsWith("@")) {
+        return (
+          <span key={index} className="text-main-accent">
+            {part}
+          </span>
+        );
+      }
+      return part;
+    });
+  }
+
   return (
     <div className="pb-4 mt-3 mx-4 overflow-hidden">
       {user && (
@@ -18,6 +32,11 @@ const ProfileDetails = ({ user }: any) => {
           </p>
           <p className="text-light-secondary dark:text-dark-secondary">
             @{user?.username}
+          </p>
+          <p className="mt-2 mb-2 whitespace-pre-wrap">
+            {highlightAtSymbol(
+              "CEO for Apex Legends and @redbullgaming Player | Email: teamimperialhal@unitedtalent.com"
+            )}
           </p>
           <div className="flex flex-row mt-3">
             <CustomIcon
