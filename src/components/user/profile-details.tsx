@@ -4,8 +4,8 @@ import { format } from "date-fns";
 
 const ProfileDetails = ({ user }: any) => {
   function highlightAtSymbol(text: any) {
-    const parts = text.split(/(@\w+)/g); // Split the text by "@" and following word characters
-    return parts.map((part: any, index: any) => {
+    const parts = text?.split(/(@\w+)/g); // Split the text by "@" and following word characters
+    return parts?.map((part: any, index: any) => {
       if (part.startsWith("@")) {
         return (
           <span key={index} className="text-main-accent">
