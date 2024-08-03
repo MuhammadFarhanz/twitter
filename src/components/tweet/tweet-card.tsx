@@ -187,7 +187,7 @@ const TweetCard = React.memo(({ data, isRelate, isRetweet, children }: any) => {
               createdAt={createdAt}
               handleAuthorClick={handlers.handleAuthorClick}
             />
-            <p className="text-light-primary dark:text-dark-primary whitespace-pre-wrap break-words inline-block">
+            <p className="text-light-primary text-sm dark:text-dark-primary whitespace-pre-wrap break-words inline-block">
               {content}
             </p>
 
