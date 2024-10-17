@@ -36,7 +36,7 @@ function ImageInput(props: ImageInputProps) {
             accept="images/*"
             multiple
             onChange={props.handleFileInputChange}
-            disabled={index !== 0 && true}
+            disabled={index != 0}
             name="image"
           />
           <CustomIcon

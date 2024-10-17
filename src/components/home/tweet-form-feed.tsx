@@ -57,7 +57,7 @@ export const TweetFormFeed = () => {
             {formik.values.images.map((image: any, index: any) => (
               <ImageComponent
                 key={index}
-                image={image}
+                image={image.preview}
                 index={index}
                 imageLength={formik.values.images.length}
                 onDeleteImage={handleDeleteImage}

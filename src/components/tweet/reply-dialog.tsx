@@ -131,7 +131,7 @@ export default function ReplyDialog({
                   {formik.values.images.map((image: any, index: number) => (
                     <ImageComponent
                       key={index}
-                      image={image}
+                      image={image.preview}
                       index={index}
                       imageLength={formik.values.images.length}
                       onDeleteImage={handleDeleteImage}
@@ -143,7 +143,13 @@ export default function ReplyDialog({
                   <div className="flex items-center justify-center text-main-accent px-2 ">
                     <ImageInput handleFileInputChange={handleFileInputChange} />
                   </div>
-                  <TweetButton />
+                  <TweetButton
+                    disable={
+                      formik.values.content || formik.values.images.length != 0
+                        ? false
+                        : true
+                    }
+                  />
                 </div>
               </div>
             </label>

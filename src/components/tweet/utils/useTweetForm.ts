@@ -1,13 +1,15 @@
 import { useFormik } from "formik";
 import { useCreateTweet } from "@/lib/hooks/useCreateTweet";
-import { handleFileChange } from "./handleChangeFile";
 
 interface TweetFormValues {
   content: string;
-  images: string[];
+  images: ImageObject[];
   replyToId?: number;
 }
-
+interface ImageObject {
+  file: File;
+  preview: string;
+}
 interface UseTweetFormLogicProps {
   onSuccess?: () => void;
   id?: number;
@@ -27,9 +29,22 @@ function useTweetFormLogic({ id, onSuccess }: UseTweetFormLogicProps) {
         if (id !== undefined) {
           values.replyToId = id;
         }
-        await createTweet(values);
+
+        const formData = new FormData();
+        formData.append("content", values.content);
+        if (values.replyToId) {
+          formData.append("replyToId", values.replyToId.toString());
+        }
+
+        values.images.forEach((imageObject, index) => {
+          formData.append("file", imageObject.file);
+        });
+
+        await createTweet(formData);
 
         resetForm();
+
+        onSuccess?.();
         onSuccess?.();
       } catch (error) {
         console.error("Error:", error);
@@ -37,8 +52,30 @@ function useTweetFormLogic({ id, onSuccess }: UseTweetFormLogicProps) {
     },
   });
 
-  const handleFileInputChange = async (e: any) => {
-    handleFileChange(e.target.files, formik);
+  const handleFileInputChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = e.target.files;
+
+    if (files && files.length > 0) {
+      const newImages: ImageObject[] = [];
+
+      Array.from(files).forEach((file: File) => {
+        if (file.type.startsWith("image/") && formik.values.images.length < 4) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const url = reader.result as string;
+            // Add the image file and its preview URL to the array
+            newImages.push({ file, preview: url });
+            formik.setFieldValue("images", [
+              ...formik.values.images,
+              ...newImages,
+            ]);
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
   };
 
   return { formik, handleFileInputChange };
