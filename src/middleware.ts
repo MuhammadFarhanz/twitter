@@ -7,7 +7,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === "/auth/sign-in") {
+  if (pathname === "/auth/sign-in" || pathname === "/auth/sign-up") {
     return NextResponse.next();
   }
 
