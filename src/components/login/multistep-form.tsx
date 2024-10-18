@@ -3,9 +3,7 @@ import { Dialog, DialogContent } from "../ui/dialog";
 import { CustomIcon } from "../ui/custom-icon";
 import Background from "../../../public/assets/default_profile_400x400.png";
 import { useFormik } from "formik";
-import MultiStep from "react-multistep";
 import { Input } from "../ui/input";
-
 import { useDialogStore } from "@/lib/store/dialog";
 import { useUpdateUser } from "@/lib/hooks/useUpdateUser";
 import { useGetUser } from "@/lib/hooks/useGetUser";
@@ -30,12 +28,12 @@ function StepOne({ formik, handleFileChange, setStep }: any) {
         <form onSubmit={formik.handleSubmit} className="relative">
           <img
             src={
-              formik.values.profile_pic
-                ? formik.values.profile_pic
-                : Background.src
+              formik.values.profile_pic instanceof File
+                ? URL.createObjectURL(formik.values.profile_pic)
+                : formik.values.profile_pic || Background.src
             }
-            // alt="Profile Picture"
-            className="h-44 w-44 bg-black rounded-full relative flex justify-center items-center"
+            alt="Profile Picture"
+            className="h-44 w-44 bg-black rounded-full relative flex justify-center items-center object-cover"
           />
           <label
             htmlFor="file-input"
@@ -50,7 +48,7 @@ function StepOne({ formik, handleFileChange, setStep }: any) {
             className="hidden"
             type="file"
             accept="images/*"
-            name="image"
+            name="profile_pic"
             id="file-input"
             onChange={handleFileChange}
           />
@@ -99,8 +97,10 @@ function StepTwo({ formik }: any) {
                 <p className="text-blue-400 flex-none">@</p>
                 <div className="flex-grow">
                   <Input
-                    onChange={formik.handleChange}
                     name="name"
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    // placeholder="Enter your name"
                     className="border-1 h-6 font-medium text-lg rounded-none p-1 w-full focus-visible:ring-0 "
                   />
                 </div>
@@ -135,11 +135,17 @@ function MultistepForm({ isOpen }: any) {
 
   const formik = useFormik({
     initialValues: {
-      profile_pic: "",
-      name: null,
+      profile_pic: Background.src,
+      name: "",
     },
     onSubmit: (values) => {
-      mutateAsync(values);
+      const formData = new FormData();
+      if (values.profile_pic) {
+        formData.append("profile_pic", values.profile_pic);
+      }
+      formData.append("name", values?.name);
+
+      mutateAsync(formData);
     },
   });
 
@@ -147,49 +153,9 @@ function MultistepForm({ isOpen }: any) {
     if (event.currentTarget.files) {
       const file = event.currentTarget.files[0];
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        formik.setFieldValue("profile_pic", result);
-      };
-      //reader.readAsDataURL(file);
-      if (file) {
-        reader.readAsDataURL(file);
-      }
+      formik.setFieldValue("profile_pic", file);
     }
   };
-
-  const fetchAndConvertToBase64 = async (url: string): Promise<string> => {
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      return new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          const base64String = reader.result as string;
-          resolve(base64String);
-        };
-        reader.onerror = () => {
-          reject(new Error("Error reading image data"));
-        };
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      throw new Error("Error fetching image data: ");
-    }
-  };
-
-  useEffect(() => {
-    // Fetch and convert default profile picture to Base64
-    fetchAndConvertToBase64(Background.src)
-      .then((base64String) => {
-        // Set the profile_pic field with the Base64 string
-        formik.setFieldValue("profile_pic", base64String);
-      })
-      .catch((error) => {
-        console.error("Error converting image to Base64:", error);
-      });
-  }, []);
 
   return (
     <div className="fixed">

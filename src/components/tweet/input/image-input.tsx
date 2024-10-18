@@ -34,7 +34,6 @@ function ImageInput(props: ImageInputProps) {
             className="hidden"
             type="file"
             accept="images/*"
-            multiple
             onChange={props.handleFileInputChange}
             disabled={index != 0}
             name="image"

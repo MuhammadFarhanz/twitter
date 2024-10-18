@@ -272,20 +272,15 @@ function Post() {
                   <div className="my-1 text-light-primary dark:text-dark-primary break-words whitespace-pre-wrap inline-block">
                     {content}
                   </div>
-                  <div
-                    className={`items-center w-full mt-2 rounded-2xl overflow-hidden p-0 mb-3 ${
-                      imageGridStyles[images?.length] || ""
-                    }`}
-                  >
-                    <RenderImages
-                      setSelectedImageId={setSelectedImageId}
-                      setImageDialogOpen={setImageDialogOpen}
-                      imageDialogOpen={imageDialogOpen}
-                      images={images}
-                    />
-                  </div>
 
-                  <div className="flex items-center  text-sm text-light-secondary dark:text-dark-secondary ">
+                  <RenderImages
+                    setSelectedImageId={setSelectedImageId}
+                    setImageDialogOpen={setImageDialogOpen}
+                    imageDialogOpen={imageDialogOpen}
+                    images={images}
+                  />
+
+                  <div className="flex mt-2 items-center  text-sm text-light-secondary dark:text-dark-secondary ">
                     <p>{formattedDateTime}</p>&nbsp;·&nbsp;
                     <p className="text-light-primary dark:text-dark-primary">
                       4.1M{" "}

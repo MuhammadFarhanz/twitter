@@ -63,7 +63,9 @@ const RenderImages: React.FC<RenderImagesProps> = ({
         images.map((image: any, index: number) => (
           <Dialog key={index} open={imageDialogOpen}>
             <img
-              className="w-full h-full object-cover cursor-pointer"
+              className={`${
+                images.length == 4 ? "h-40" : "h-full"
+              } w-full object-cover cursor-pointer`}
               src={image?.url}
               alt={`Image ${index + 1}`}
               onClick={(e) => handleClick(e, image?.id)}

@@ -9,7 +9,7 @@ import { useGetUser } from "@/lib/hooks/useGetUser";
 
 interface TweetFormProps {
   formik: any;
-  handleFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  handleFileInputChange: any;
   handleDeleteImage: (index: number) => void;
   className?: any;
 }
@@ -58,10 +58,10 @@ export const TweetFormDialog = ({
                 formik.values.images.length > 1 && " grid-cols-2"
               } gap-2`}
             >
-              {formik.values.images.map((image: any, index: any) => (
+              {formik?.values?.images?.map((image: any, index: any) => (
                 <ImageComponent
                   key={index}
-                  image={image}
+                  image={URL.createObjectURL(image.file)}
                   index={index}
                   imageLength={formik.values.images.length}
                   onDeleteImage={handleDeleteImage}
