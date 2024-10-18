@@ -82,23 +82,23 @@ const login = async (request, res) => {
     });
 
     //for prod token
-    // res.cookie("token", token, {
-    //   //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: "none",
-    //   domain: ".twitterr.my.id",
-    //   maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
-    //   path: "/",
-    // });
-
     res.cookie("token", token, {
       //   httpOnly: true,
       secure: true,
       sameSite: "none",
-      // domain: ".twitterr.my.id",
+      domain: ".twitterr.my.id",
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       path: "/",
     });
+
+    // res.cookie("token", token, {
+    //   //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "none",
+    //   // domain: ".twitterr.my.id",
+    //   maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+    //   path: "/",
+    // });
 
     const updatedUser = await prisma.user.update({
       data: {
@@ -147,8 +147,6 @@ const logout = async (id, res) => {
   });
 
   return;
-
-  //return res.status(200).json({ message: "Logged out successfully" });
 };
 
 const get = async (id) => {
