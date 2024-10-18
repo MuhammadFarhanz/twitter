@@ -1,4 +1,5 @@
 import userService from "../services/user-service.js";
+import { uploadImageToS3 } from "../utils/upload-s3.js";
 
 const register = async (req, res, next) => {
   try {
@@ -55,9 +56,19 @@ const getByUsername = async (req, res, next) => {
 const update = async (req, res, next) => {
   try {
     const id = req.user.id;
+    const profile_pic = req.files;
+
+    let profilePicUrl = [];
+
+    if (profile_pic.length > 0) {
+      profilePicUrl = await uploadImageToS3(profile_pic);
+    } else {
+      profilePicUrl = ["/assets/default_profile_400x400.png"];
+    }
 
     const request = req.body;
     request.id = id;
+    request.profile_pic = profilePicUrl[0];
 
     const result = await userService.update(request);
 

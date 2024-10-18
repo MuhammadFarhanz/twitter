@@ -81,11 +81,21 @@ const login = async (request, res) => {
       expiresIn: 60 * 60 * 24 * 30,
     });
 
+    //for prod token
+    // res.cookie("token", token, {
+    //   //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: "none",
+    //   domain: ".twitterr.my.id",
+    //   maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
+    //   path: "/",
+    // });
+
     res.cookie("token", token, {
       //   httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: ".twitterr.my.id",
+      // domain: ".twitterr.my.id",
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       path: "/",
     });
@@ -211,6 +221,7 @@ const getByUsername = async (username) => {
           tweet: {
             select: {
               id: true,
+              content: true,
               ...tweetIncludeFields,
             },
           },
@@ -223,33 +234,63 @@ const getByUsername = async (username) => {
     throw new ResponseError(404, "user not found");
   }
 
-  const tweets = await prisma.tweet.findMany({
-    where: {
-      authorId: user.id,
-      replyToId: null,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    include: tweetIncludeFields,
-  });
-
-  const replies = await prisma.tweet.findMany({
-    where: {
-      authorId: user.id,
-      replyToId: {
-        not: null,
-      },
-    },
-    include: replyIncludeFields,
-  });
-
   // Combine the user data and the tweets data into one object
-  const result = {
-    ...user,
-    tweets: tweets,
-    replies: replies,
-  };
+  const result = await prisma.$transaction(async (prisma) => {
+    const tweets = await prisma.tweet.findMany({
+      where: {
+        authorId: user.id,
+        replyToId: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: tweetIncludeFields,
+    });
+
+    const replies = await prisma.tweet.findMany({
+      where: {
+        authorId: user.id,
+        replyToId: {
+          not: null,
+        },
+      },
+      include: replyIncludeFields,
+    });
+
+    return {
+      ...user,
+      tweets,
+      replies,
+    };
+  });
+
+  // const tweets = await prisma.tweet.findMany({
+  //   where: {
+  //     authorId: user.id,
+  //     replyToId: null,
+  //   },
+  //   orderBy: {
+  //     createdAt: "desc",
+  //   },
+  //   include: tweetIncludeFields,
+  // });
+
+  // const replies = await prisma.tweet.findMany({
+  //   where: {
+  //     authorId: user.id,
+  //     replyToId: {
+  //       not: null,
+  //     },
+  //   },
+  //   include: replyIncludeFields,
+  // });
+
+  // // Combine the user data and the tweets data into one object
+  // const result = {
+  //   ...user,
+  //   tweets: tweets,
+  //   replies: replies,
+  // };
 
   // Return the combined data
   return result;
@@ -290,6 +331,7 @@ const update = async (request) => {
     select: {
       username: true,
       name: true,
+      profile_pic: true,
     },
   });
 };

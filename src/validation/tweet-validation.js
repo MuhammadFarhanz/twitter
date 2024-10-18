@@ -10,7 +10,7 @@ const createTweetValidation = Joi.object({
 })
   .custom((value, helpers) => {
     const { content, images } = value;
-    if (!content && (!images || images.length === 0)) {
+    if (!content && !images) {
       return helpers.error("any.required");
     }
     return value;

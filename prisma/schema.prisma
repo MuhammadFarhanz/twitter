@@ -51,7 +51,7 @@ model Tweet {
 }
 
 model Image {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(uuid())
   tweetId   Int?
   replyId   Int?
   url       String

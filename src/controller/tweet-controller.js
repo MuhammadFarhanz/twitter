@@ -1,11 +1,24 @@
 import tweetService from "../services/tweet-service.js";
+import { uploadImageToS3 } from "../utils/upload-s3.js";
 
 const create = async (req, res, next) => {
   try {
     const id = req.user.id;
+    const files = req.files;
+
+    console.log(files);
+    let imageUrls = [];
+
+    if (files) {
+      imageUrls = await uploadImageToS3(files);
+    }
 
     const request = req.body;
     request.authorId = id;
+
+    if (imageUrls) {
+      request.images = imageUrls;
+    }
 
     const result = await tweetService.create(request);
 

@@ -13,13 +13,10 @@ import { validate } from "../validation/validation.js";
 const create = async (request) => {
   const data = validate(createTweetValidation, request);
 
-  // Assuming data.images is an array of image URLs
   const imageUrls = data?.images;
 
-  // Filter out undefined values from the array
   const filteredImageUrls = imageUrls?.filter((url) => url !== undefined);
 
-  // Create the 'images' array for Prisma
   const images = filteredImageUrls?.map((url) => ({ url }));
 
   return await prisma.tweet.create({
