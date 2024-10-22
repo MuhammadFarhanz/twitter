@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  email       String   @unique
+  password    String
+  name        String?
+  bio         String?
+  profile_pic String?
+  is_verified Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  token       String?
+
+  tweets      Tweet[]    @relation("UserTweets")
+  replies     Tweet[]    @relation("UserReplies")
+  likedTweets Like[]     @relation("LikedTweets")
+  retweets    Retweet[]  @relation("Retweets")
+  bookmark    Bookmark[] @relation("Bookmarks")
+  followedBy  User[]     @relation("UserFollows")
+  following   User[]     @relation("UserFollows")
+}
+
+model Tweet {
+  id        Int      @id @default(autoincrement())
+  content   String?
+  authorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  images    Image[]  @relation("TweetImage")
+
+  replyToId   Int?    @map("reply_to_id")
+  parent      Tweet?  @relation("ParentTweet", fields: [replyToId], references: [id])
+  replies     Tweet[] @relation("ParentTweet")
+  replyImages Image[] @relation("ReplyImage")
+
+  author    User  @relation("UserTweets", fields: [authorId], references: [id], map: "TweetAuthor")
+  repliedBy User? @relation("UserReplies", fields: [authorId], references: [id], map: "RepliesAuthor")
+
+  likedBy      Like[]     @relation("LikedBy")
+  retweetedBy  Retweet[]  @relation("RetweetedBy")
+  bookmarkedBy Bookmark[] @relation("Bookmarks")
+}
+
+model Image {
+  id        String   @id @default(uuid())
+  tweetId   Int?
+  replyId   Int?
+  url       String
+  createdAt DateTime @default(now())
+
+  tweet Tweet? @relation(name: "TweetImage", fields: [tweetId], references: [id])
+  reply Tweet? @relation(name: "ReplyImage", fields: [replyId], references: [id])
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tweetId   Int
+  createdAt DateTime @default(now())
+
+  user  User  @relation("LikedTweets", fields: [userId], references: [id])
+  tweet Tweet @relation("LikedBy", fields: [tweetId], references: [id])
+}
+
+model Retweet {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tweetId   Int
+  createdAt DateTime @default(now())
+
+  user  User  @relation("Retweets", fields: [userId], references: [id])
+  tweet Tweet @relation("RetweetedBy", fields: [tweetId], references: [id])
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  tweetId   Int
+  createdAt DateTime @default(now())
+
+  user  User  @relation("Bookmarks", fields: [userId], references: [id])
+  tweet Tweet @relation("Bookmarks", fields: [tweetId], references: [id])
+
+  @@unique([userId, tweetId])
+}
