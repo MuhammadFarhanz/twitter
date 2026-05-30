@@ -6,6 +6,8 @@ const errorMiddleware = async (err, req, res, next) => {
     return;
   }
 
+  console.error("log:", err);
+
   if (err instanceof ResponseError) {
     if (err.field) {
       res

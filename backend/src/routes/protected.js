@@ -10,14 +10,12 @@ import upload from "../application/upload.js";
 const userRouter = new express.Router();
 
 userRouter.use(authMiddleware);
-
-// User API
 userRouter.get("/api/users/current", userController.get);
 
 userRouter.patch(
   "/api/users/current",
   upload.array("profile_pic", 1),
-  userController.update
+  userController.update,
 );
 userRouter.delete("/api/users/logout", userController.logout);
 userRouter.post("/api/users/follow/:id", userController.follow);
@@ -25,16 +23,14 @@ userRouter.post("/api/users/bookmark", userController.bookmark);
 userRouter.get("/api/users/bookmark", userController.getBookmark);
 userRouter.get("/api/users/random", userController.getFollowSuggestion);
 userRouter.get("/api/users/:username", userController.getByUsername);
-//Tweet API
+
 userRouter.post("/api/tweet", upload.array("file", 4), tweetController.create);
 userRouter.get("/api/tweet", tweetController.getAll);
 userRouter.get("/api/tweet/timeline", tweetController.timeline);
 userRouter.get("/api/tweet/:id", tweetController.getById);
 
-//Like Tweet API
 userRouter.post("/api/tweet/like", likeController.create);
 
-//Retweet API
 userRouter.post("/api/tweet/retweet", retweetController.create);
 
 export { userRouter };

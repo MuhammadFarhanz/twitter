@@ -6,7 +6,6 @@ const create = async (req, res, next) => {
     const id = req.user.id;
     const files = req.files;
 
-    console.log(files);
     let imageUrls = [];
 
     if (files) {

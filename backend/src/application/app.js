@@ -9,7 +9,7 @@ import path from "express";
 export const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:3000", "https://twitterr.my.id"],
+  origin: ["http://localhost:3000", "https://twt.my.id"],
   credentials: true,
 };
 

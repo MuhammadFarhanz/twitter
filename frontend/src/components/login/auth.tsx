@@ -60,7 +60,7 @@ export default function AuthCommon({
 
           const loginData = {
             email: values.email,
-            password: values.password, // Assuming password is stored in form values
+            password: values.password, 
           };
 
           await loginUser(loginData);

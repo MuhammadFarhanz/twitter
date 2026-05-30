@@ -66,7 +66,7 @@ const login = async (request, res) => {
 
   const isPasswordValid = await bcrypt.compare(
     loginRequest.password,
-    user.password
+    user.password,
   );
 
   if (isPasswordValid) {
@@ -86,19 +86,10 @@ const login = async (request, res) => {
       //   httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: ".twitterr.my.id",
+      domain: process.env.NODE_ENV === "production" ? ".twt.my.id" : undefined,
       maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
       path: "/",
     });
-
-    // res.cookie("token", token, {
-    //   //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: "none",
-    //   // domain: ".twitterr.my.id",
-    //   maxAge: 1000 * 60 * 60 * 24 * 30, // 30 days
-    //   path: "/",
-    // });
 
     const updatedUser = await prisma.user.update({
       data: {
@@ -406,7 +397,7 @@ const bookmarks = async (request) => {
   }
 
   const isBookmarked = user.bookmark.some(
-    (bookmark) => bookmark.tweetId === data.tweetId
+    (bookmark) => bookmark.tweetId === data.tweetId,
   );
 
   if (isBookmarked) {
