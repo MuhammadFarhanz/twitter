@@ -1,0 +1,75 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: dev_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: dev_database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user -d dev_database"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  studio:
+    container_name: prisma_studio
+    build:
+      context: ./backend
+      target: development
+    command: npx prisma studio --port 5555 --hostname 0.0.0.0
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgres://dev_user:dev_password@database:5432/dev_database
+    depends_on:
+      - database
+
+  backend:
+    container_name: dev_express
+    build:
+      context: ./backend
+      target: development
+    command: sh -c "npx prisma db push & npm run dev"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - DATABASE_URL=postgres://dev_user:dev_password@database:5432/dev_database
+    env_file:
+      - ./backend/.env
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    container_name: dev_nextjs
+    build:
+      context: ./frontend
+      target: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - INTERNAL_API_URL=http://backend:8000
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    command: npm run dev
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
