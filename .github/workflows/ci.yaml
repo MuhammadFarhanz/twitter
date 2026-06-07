@@ -1,0 +1,74 @@
+name: Docker Image Build and Push
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "frontend/**"
+      - "backend/**"
+  workflow_dispatch:
+jobs:
+  build-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Github Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and Push Frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}-frontend:latest
+            ghcr.io/${{ github.repository }}-frontend:${{ github.sha }}
+
+      - name: Build and Push Backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}-backend:latest
+            ghcr.io/${{ github.repository }}-backend:${{ github.sha }}
+
+      - name: Checkout Gitops Repository
+        uses: actions/checkout@v3
+        with:
+          repository: MuhammadFarhanz/argocd-kubernetes-gitops
+          token: ${{ secrets.GITOPS_PAT }}
+          path: gitops
+          ref: main
+
+      - name: Update Helm Chart Values
+        run: |
+          cd gitops/apps/twitter
+
+          # Inject lowercase repo path and commit SHA for Frontend
+          yq -i '.frontend.image.repository = "ghcr.io/'"${{ github.repository }}"'-frontend"' values.yaml
+          yq -i '.frontend.image.tag = "${{ github.sha }}"' values.yaml
+
+          # Inject lowercase repo path and commit SHA for Backend
+          yq -i '.backend.image.repository = "ghcr.io/'"${{ github.repository }}"'-backend"' values.yaml
+          yq -i '.backend.image.tag = "${{ github.sha }}"' values.yaml
+
+      - name: Commit and Push Changes to GitOps Repo
+        run: |
+          cd gitops
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add apps/twitter/values.yaml
+          git commit -m "Updates images to commit ${{ github.sha }}"
+          git push origin main
