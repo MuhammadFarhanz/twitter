@@ -6,15 +6,27 @@ on:
     paths:
       - "frontend/**"
       - "backend/**"
-  workflow_dispatch:
+  # workflow_dispatch:
 env:
   REGISTRY_REPO: ghcr.io/muhammadfarhanz/twitter
 jobs:
   build-images:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Check Path Changes
+        id: changes
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+            backend:
+              - 'backend/**'
 
       - name: Login to Github Container Registry
         uses: docker/login-action@v2
@@ -27,24 +39,26 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: Build and Push Frontend image
+        if: steps.changes.outputs.frontend == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.REGISTRY_REPO }}-frontend:latest
-            ghcr.io/${{ env.REGISTRY_REPO }}-frontend:${{ github.sha }}
+            ${{ env.REGISTRY_REPO }}-frontend:latest
+            ${{ env.REGISTRY_REPO }}-frontend:${{ github.sha }}
 
       - name: Build and Push Backend image
+        if: steps.changes.outputs.backend == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.REGISTRY_REPO }}-backend:latest
-            ghcr.io/${{ env.REGISTRY_REPO }}-backend:${{ github.sha }}
+            ${{ env.REGISTRY_REPO }}-backend:latest
+            ${{ env.REGISTRY_REPO }}-backend:${{ github.sha }}
 
       - name: Checkout Gitops Repository
         uses: actions/checkout@v3
@@ -59,12 +73,16 @@ jobs:
           cd gitops/apps/twitter
 
           # Inject lowercase repo path and commit SHA for Frontend
-          yq -i '.frontend.image.repository = "ghcr.io/'"${{ env.REGISTRY_REPO }}"'-frontend"' values.yaml
+          if [ "${{ steps.changes.outputs.frontend }}" = "true" ]; then
+          yq -i '.frontend.image.repository = "${{ env.REGISTRY_REPO }}-frontend"' values.yaml
           yq -i '.frontend.image.tag = "${{ github.sha }}"' values.yaml
+          fi
 
           # Inject lowercase repo path and commit SHA for Backend
-          yq -i '.backend.image.repository = "ghcr.io/'"${{ env.REGISTRY_REPO }}"'-backend"' values.yaml
+          if [ "${{ steps.changes.outputs.backend }}" = "true" ]; then
+          yq -i '.backend.image.repository = "${{ env.REGISTRY_REPO }}-backend"' values.yaml
           yq -i '.backend.image.tag = "${{ github.sha }}"' values.yaml
+          fi
 
       - name: Commit and Push Changes to GitOps Repo
         run: |
