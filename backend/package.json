@@ -2,7 +2,6 @@
   "name": "twitter-backend",
   "version": "1.0.0",
   "main": "src/main.js",
-  "type": "module",
   "scripts": {
     "test": "jest -i",
     "start": "nodemon src/server.js",

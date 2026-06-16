@@ -55,6 +55,8 @@ COPY --chown=nodejs:nodejs . .
 # 2. RESTORE THE DEPENDENCIES: Explicitly pull node_modules back from build-deps
 COPY --from=build-deps --chown=nodejs:nodejs /app/node_modules ./node_modules
 
+RUN npx prisma generate
+
 # Build the application
 RUN npm run build
 
@@ -100,6 +102,11 @@ ENV NODE_ENV=production \
 # Copy production dependencies from deps stage
 COPY --from=deps --chown=nodejs:nodejs /app/node_modules ./node_modules
 COPY --from=deps --chown=nodejs:nodejs /app/package*.json ./
+
+COPY --from=build --chown=nodejs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=build --chown=nodejs:nodejs /app/node_modules/@prisma/client ./node_modules/@prisma/client
+
+
 # Copy built application from build stage
 COPY --from=build --chown=nodejs:nodejs /app/dist ./dist
 
