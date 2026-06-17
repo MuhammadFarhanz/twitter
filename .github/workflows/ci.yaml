@@ -84,6 +84,9 @@ jobs:
           yq -i '.backend.image.tag = "${{ github.sha }}"' values.yaml
           fi
 
+          # Update appVersion in Chart.yaml
+          yq -i '.appVersion = "${{ github.sha }}"' Chart.yaml
+
       - name: Commit and Push Changes to GitOps Repo
         run: |
           cd gitops
